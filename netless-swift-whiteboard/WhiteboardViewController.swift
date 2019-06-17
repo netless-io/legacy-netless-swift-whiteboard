@@ -7,15 +7,46 @@
 //
 
 import UIKit
+class Tools{
+    let index: Int
+    let iconView: UIImage
+    let hasColor: Bool
+    let hasStroke: Bool
+    init(index: Int, iconView: UIImage, hasColor: Bool, hasStroke: Bool) {
+        self.index = index
+        self.iconView = iconView
+        self.hasColor = hasColor
+        self.hasStroke = hasStroke
+    }
+}
+
+enum ToolType: String {
+    case selector = "selector"
+    case pencil = "pencil"
+    case text = "text"
+    case upload = "upload"
+    case eraser = "eraser"
+    case ellipse = "ellipse"
+    case rectangle = "rectangle"
+}
 
 class WhiteboardViewController: UIViewController {
     var toolArray = ["selector", "pencil", "text", "upload", "eraser", "ellipse", "rectangle"]
+    var toolDic: Dictionary<ToolType, Tools> = [
+        ToolType.selector: Tools.init(index: 1, iconView: UIImage(named: ToolType.selector.rawValue)!, hasColor: false, hasStroke: false),
+        ToolType.pencil: Tools.init(index: 2, iconView: UIImage(named: ToolType.pencil.rawValue)!, hasColor: true, hasStroke: true),
+        ToolType.text: Tools.init(index: 3, iconView: UIImage(named: ToolType.text.rawValue)!, hasColor: true, hasStroke: false),
+        ToolType.upload: Tools.init(index: 4, iconView: UIImage(named: ToolType.upload.rawValue)!, hasColor: false, hasStroke: false),
+        ToolType.eraser: Tools.init(index: 5, iconView: UIImage(named: ToolType.eraser.rawValue)!, hasColor: false, hasStroke: false),
+        ToolType.ellipse: Tools.init(index: 6, iconView: UIImage(named: ToolType.ellipse.rawValue)!, hasColor: true, hasStroke: true),
+        ToolType.rectangle: Tools.init(index: 7, iconView: UIImage(named: ToolType.rectangle.rawValue)!, hasColor: true, hasStroke: true),
+    ]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "互动白板"
         self.view.backgroundColor = UIColor.white
         let superview = self.view!
-        
         let whiteboard = WhiteBoardView()
         superview.addSubview(whiteboard)
         setUpBoardControllerBox(superview: superview)
@@ -157,16 +188,11 @@ class WhiteboardViewController: UIViewController {
         self.navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
-//    override func viewWillDisappear(_ animated: Bool) {
-//        super.viewWillDisappear(true)
-//        self.navigationController?.setNavigationBarHidden(false, animated: true)
-//    }
-    
     func setUpToolBoxCell(cellBox: UIView) -> Void {
-        for (index, tool) in toolArray.enumerated() {
-            let offsetX = index * 36
+        for tool in toolDic {
+            let offsetX = (tool.value.index - 1) * 36
             let button = UIButton(type: UIButton.ButtonType.custom)
-            let toolIcon = UIImage(named: tool)
+            let toolIcon = tool.value.iconView
             button.setImage(toolIcon, for: .normal)
             button.frame = CGRect(x: offsetX, y: 0, width: 36, height: 36)
             cellBox.addSubview(button)
