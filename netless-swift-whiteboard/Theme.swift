@@ -11,5 +11,6 @@ import UIKit
 class Theme {
     static let mainColor = Utils.hexStringToUIColor(hex:"#5B908E")
     static let mainGray = Utils.hexStringToUIColor(hex: "#A2A7AD")
+    static let bgGray = Utils.hexStringToUIColor(hex: "#F6F6F6")
     static let mainGrayLight = Utils.hexStringToUIColor(hex: "#ECECEC")
 }

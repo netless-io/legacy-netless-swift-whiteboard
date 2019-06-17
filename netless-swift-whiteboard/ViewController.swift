@@ -29,7 +29,7 @@ class ViewController: UIViewController {
         createButton.setTitle("创建白板", for: .normal)
         createButton.setTitleColor(UIColor.white, for: .normal)
         createButton.backgroundColor = Theme.mainColor
-        createButton.addTarget(self, action: #selector(goToWhiteboardView), for: .touchUpInside)
+        createButton.addTarget(self, action: #selector(goCreateRoomView), for: .touchUpInside)
         createButton.layer.cornerRadius = 8
         superview.addSubview(createButton)
         createButton.snp.makeConstraints { (make) -> Void in
@@ -77,7 +77,7 @@ class ViewController: UIViewController {
         }
     }
     
-    @objc func goToWhiteboardView() -> Void {
+    @objc func goCreateRoomView() -> Void {
         self.navigationController?.pushViewController(CreateRoomViewController(), animated: true);
     }
     
