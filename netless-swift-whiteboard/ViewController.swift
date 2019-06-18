@@ -11,6 +11,9 @@ import SnapKit
 
 class ViewController: UIViewController {
 
+//    let uuid: String
+//    let roomToken: String
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "创建白板"
@@ -18,11 +21,18 @@ class ViewController: UIViewController {
         
        
         let superview = self.view!
+        
+        ApiMiddleWare.createRoom(name: "test", limit: 100, room: RoomType.historied, callBack: callBack1)
         setUpLogoImage(superview: superview)
         setUpCreateButton(superview: superview)
         setUpJoinButton(superview: superview)
     }
     
+    func callBack1(uuid: String, roomToken: String) -> Void {
+        print("1\(uuid)")
+        print("2\(roomToken)")
+    }
+
     func setUpCreateButton(superview: UIView) -> Void {
         let createButton = UIButton(type: UIButton.ButtonType.custom)
         createButton.setTitle("创建白板", for: .selected)

@@ -53,9 +53,13 @@ class WhiteboardViewController: UIViewController {
         setUpSetBox(superview: superview)
         setUpShare(superview: superview)
         setUpGoBackBtn(superview: superview)
-        setUpReplayBtn(superview: superview)
+//        setUpReplayBtn(superview: superview)
         setUpMenuBtn(superview: superview)
         setUpToolBox(superview: superview)
+    }
+    
+    func setUpTestBox(superview: UIView) -> Void {
+        
     }
     
     func setUpBoardControllerBox(superview: UIView) -> Void {
@@ -134,20 +138,20 @@ class WhiteboardViewController: UIViewController {
     @objc func goCreateRoomView() -> Void {
         self.navigationController?.popViewController(animated: true);
     }
-    func setUpReplayBtn(superview: UIView) -> Void {
-        let replayBtn = UIButton(type: UIButton.ButtonType.custom)
-        let toolIcon = UIImage(named: "player")
-        replayBtn.setImage(toolIcon, for: .normal)
-        replayBtn.layer.borderColor = Theme.mainColor.cgColor
-        replayBtn.layer.borderWidth = 1
-        replayBtn.layer.cornerRadius = 18
-        superview.addSubview(replayBtn)
-        replayBtn.snp.makeConstraints({(make) -> Void in
-            make.size.equalTo(CGSize(width: 36, height: 36))
-            make.bottomMargin.equalTo(-28)
-            make.leftMargin.equalTo(4)
-        })
-    }
+//    func setUpReplayBtn(superview: UIView) -> Void {
+//        let replayBtn = UIButton(type: UIButton.ButtonType.custom)
+//        let toolIcon = UIImage(named: "player")
+//        replayBtn.setImage(toolIcon, for: .normal)
+//        replayBtn.layer.borderColor = Theme.mainColor.cgColor
+//        replayBtn.layer.borderWidth = 1
+//        replayBtn.layer.cornerRadius = 18
+//        superview.addSubview(replayBtn)
+//        replayBtn.snp.makeConstraints({(make) -> Void in
+//            make.size.equalTo(CGSize(width: 36, height: 36))
+//            make.bottomMargin.equalTo(-28)
+//            make.leftMargin.equalTo(4)
+//        })
+//    }
     
     func setUpMenuBtn(superview: UIView) -> Void {
         let menuBtn = UIButton(type: UIButton.ButtonType.custom)
