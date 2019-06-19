@@ -25,6 +25,7 @@
 		6DDE2D5722B50D7F008519FE /* QRCodeUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDE2D5622B50D7F008519FE /* QRCodeUtil.swift */; };
 		6DDE2D6422B9076F008519FE /* TokenConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDE2D6322B9076F008519FE /* TokenConfig.swift */; };
 		6DDE2D6622B9086B008519FE /* ApiMiddleWare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDE2D6522B9086B008519FE /* ApiMiddleWare.swift */; };
+		6DDE2D6A22BA62C0008519FE /* ToolboxButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDE2D6922BA62C0008519FE /* ToolboxButton.swift */; };
 		BFEC3242A30C0722791CB64A /* Pods_netless_swift_whiteboard.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4767978068D8ADFD9133475B /* Pods_netless_swift_whiteboard.framework */; };
 /* End PBXBuildFile section */
 
@@ -72,6 +73,7 @@
 		6DDE2D5622B50D7F008519FE /* QRCodeUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeUtil.swift; sourceTree = "<group>"; };
 		6DDE2D6322B9076F008519FE /* TokenConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenConfig.swift; sourceTree = "<group>"; };
 		6DDE2D6522B9086B008519FE /* ApiMiddleWare.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiMiddleWare.swift; sourceTree = "<group>"; };
+		6DDE2D6922BA62C0008519FE /* ToolboxButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolboxButton.swift; sourceTree = "<group>"; };
 		914328CD952D25E75D8EA48F /* Pods-netless-swift-whiteboard.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-netless-swift-whiteboard.release.xcconfig"; path = "Target Support Files/Pods-netless-swift-whiteboard/Pods-netless-swift-whiteboard.release.xcconfig"; sourceTree = "<group>"; };
 		9CAB039CCD4D5D768080EF47 /* Pods-netless-swift-whiteboard.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-netless-swift-whiteboard.debug.xcconfig"; path = "Target Support Files/Pods-netless-swift-whiteboard/Pods-netless-swift-whiteboard.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -153,6 +155,7 @@
 				6DDE2D5622B50D7F008519FE /* QRCodeUtil.swift */,
 				6DDE2D6322B9076F008519FE /* TokenConfig.swift */,
 				6DDE2D6522B9086B008519FE /* ApiMiddleWare.swift */,
+				6DDE2D6922BA62C0008519FE /* ToolboxButton.swift */,
 			);
 			path = "netless-swift-whiteboard";
 			sourceTree = "<group>";
@@ -387,6 +390,7 @@
 				6D0DCCCE22B3C5BB0027550D /* CreateRoomViewController.swift in Sources */,
 				6DDE2D6622B9086B008519FE /* ApiMiddleWare.swift in Sources */,
 				6DDE2D6422B9076F008519FE /* TokenConfig.swift in Sources */,
+				6DDE2D6A22BA62C0008519FE /* ToolboxButton.swift in Sources */,
 				6DDE2D5722B50D7F008519FE /* QRCodeUtil.swift in Sources */,
 				6D0DCC8522B365250027550D /* Theme.swift in Sources */,
 				6D0E1B0922B2481C00CD4B4F /* AppDelegate.swift in Sources */,

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+
 class Tools{
     let index: Int
     let iconView: UIImage
@@ -30,6 +31,7 @@ enum ToolType: String {
     case rectangle = "rectangle"
 }
 
+
 class WhiteboardViewController: UIViewController {
     var toolArray = ["selector", "pencil", "text", "upload", "eraser", "ellipse", "rectangle"]
     var toolDic: Dictionary<ToolType, Tools> = [
@@ -42,13 +44,18 @@ class WhiteboardViewController: UIViewController {
         ToolType.rectangle: Tools.init(index: 7, iconView: UIImage(named: ToolType.rectangle.rawValue)!, hasColor: true, hasStroke: true),
     ]
     
+    var sdk: WhiteSDK?
+    var boardView: WhiteBoardView?
+    
+    weak var roomCallbackDelegate: WhiteRoomCallbackDelegate?
+    weak var commonCallbackDelegate: WhiteCommonCallbackDelegate?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "互动白板"
         self.view.backgroundColor = UIColor.white
         let superview = self.view!
-        let whiteboard = WhiteBoardView()
-        superview.addSubview(whiteboard)
+        setUpWhiteboardView()
         setUpBoardControllerBox(superview: superview)
         setUpSetBox(superview: superview)
         setUpShare(superview: superview)
@@ -56,10 +63,30 @@ class WhiteboardViewController: UIViewController {
 //        setUpReplayBtn(superview: superview)
         setUpMenuBtn(superview: superview)
         setUpToolBox(superview: superview)
+         ApiMiddleWare.createRoom(name: "test", limit: 100, room: RoomType.historied, callBack: callBack1)
+    }
+    func setUpWhiteboardView() -> Void {
+        self.boardView = WhiteBoardView()
+        self.view.addSubview(self.boardView!)
+        self.boardView!.snp.makeConstraints({(make) -> Void in
+             make.edges.equalTo(self.view)
+        })
+        initSDK()
     }
     
-    func setUpTestBox(superview: UIView) -> Void {
-        
+    func initSDK() -> Void {
+        let config: WhiteSdkConfiguration = WhiteSdkConfiguration.defaultConfig()
+        self.sdk = WhiteSDK(whiteBoardView: self.boardView!, config: config, commonCallbackDelegate: self.commonCallbackDelegate)
+    }
+
+    func callBack1(uuid: String, roomToken: String) -> Void {
+        let roomConfig = WhiteRoomConfig(uuid: uuid, roomToken: roomToken)
+        self.sdk!.joinRoom(with: roomConfig, callbacks: self.roomCallbackDelegate, completionHandler:virrr)
+    }
+    
+    func virrr(success: Bool, room: WhiteRoom?, error: Error?) -> Void {
+        print("sss\(success)")
+        print("sss\(success)")
     }
     
     func setUpBoardControllerBox(superview: UIView) -> Void {
@@ -195,12 +222,19 @@ class WhiteboardViewController: UIViewController {
     func setUpToolBoxCell(cellBox: UIView) -> Void {
         for tool in toolDic {
             let offsetX = (tool.value.index - 1) * 36
-            let button = UIButton(type: UIButton.ButtonType.custom)
+            let button = ToolboxButton(type: UIButton.ButtonType.custom)
+            button.toolType = tool.key
             let toolIcon = tool.value.iconView
+            button.backgroundColor = UIColor.white
             button.setImage(toolIcon, for: .normal)
             button.frame = CGRect(x: offsetX, y: 0, width: 36, height: 36)
+            button.addTarget(self, action: #selector(switchTools(tool:)), for: .touchUpInside)
             cellBox.addSubview(button)
         }
+    }
+    
+    @objc func switchTools(tool: ToolboxButton) -> Void {
+    print(tool.toolType!)
     }
 }
 
