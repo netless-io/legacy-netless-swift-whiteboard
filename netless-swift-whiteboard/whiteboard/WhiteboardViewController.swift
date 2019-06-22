@@ -5,19 +5,22 @@
 //  Created by 伍双 on 2019/6/13.
 //  Copyright © 2019 伍双. All rights reserved.
 //
-
 import UIKit
+import CLImagePickerTool
+import FileBrowser
 
 class Tools{
     let index: Int
+    let isActive: Bool
     let iconView: UIImage
     let hasColor: Bool
     let hasStroke: Bool
-    init(index: Int, iconView: UIImage, hasColor: Bool, hasStroke: Bool) {
+    init(index: Int, iconView: UIImage, hasColor: Bool, hasStroke: Bool, isActive: Bool) {
         self.index = index
         self.iconView = iconView
         self.hasColor = hasColor
         self.hasStroke = hasStroke
+        self.isActive = isActive
     }
 }
 
@@ -35,17 +38,19 @@ enum ToolType: String {
 class WhiteboardViewController: UIViewController {
     var toolArray = ["selector", "pencil", "text", "upload", "eraser", "ellipse", "rectangle"]
     var toolDic: Dictionary<ToolType, Tools> = [
-        ToolType.selector: Tools.init(index: 1, iconView: UIImage(named: ToolType.selector.rawValue)!, hasColor: false, hasStroke: false),
-        ToolType.pencil: Tools.init(index: 2, iconView: UIImage(named: ToolType.pencil.rawValue)!, hasColor: true, hasStroke: true),
-        ToolType.text: Tools.init(index: 3, iconView: UIImage(named: ToolType.text.rawValue)!, hasColor: true, hasStroke: false),
-        ToolType.upload: Tools.init(index: 4, iconView: UIImage(named: ToolType.upload.rawValue)!, hasColor: false, hasStroke: false),
-        ToolType.eraser: Tools.init(index: 5, iconView: UIImage(named: ToolType.eraser.rawValue)!, hasColor: false, hasStroke: false),
-        ToolType.ellipse: Tools.init(index: 6, iconView: UIImage(named: ToolType.ellipse.rawValue)!, hasColor: true, hasStroke: true),
-        ToolType.rectangle: Tools.init(index: 7, iconView: UIImage(named: ToolType.rectangle.rawValue)!, hasColor: true, hasStroke: true),
+        ToolType.selector: Tools.init(index: 1, iconView: UIImage(named: ToolType.selector.rawValue)!, hasColor: false, hasStroke: false, isActive: false),
+        ToolType.pencil: Tools.init(index: 2, iconView: UIImage(named: ToolType.pencil.rawValue)!, hasColor: true, hasStroke: true, isActive: false),
+        ToolType.text: Tools.init(index: 3, iconView: UIImage(named: ToolType.text.rawValue)!, hasColor: true, hasStroke: false, isActive: false),
+        ToolType.eraser: Tools.init(index: 4, iconView: UIImage(named: ToolType.eraser.rawValue)!, hasColor: false, hasStroke: false, isActive: false),
+        ToolType.ellipse: Tools.init(index: 5, iconView: UIImage(named: ToolType.ellipse.rawValue)!, hasColor: true, hasStroke: true, isActive: false),
+        ToolType.rectangle: Tools.init(index: 6, iconView: UIImage(named: ToolType.rectangle.rawValue)!, hasColor: true, hasStroke: true, isActive: false),
     ]
     
     var sdk: WhiteSDK?
     var boardView: WhiteBoardView?
+    var room: WhiteRoom?
+    var activeMemberState: WhiteMemberState?
+    var btnArray: [ToolboxButton] = []
     
     weak var roomCallbackDelegate: WhiteRoomCallbackDelegate?
     weak var commonCallbackDelegate: WhiteCommonCallbackDelegate?
@@ -60,9 +65,9 @@ class WhiteboardViewController: UIViewController {
         setUpSetBox(superview: superview)
         setUpShare(superview: superview)
         setUpGoBackBtn(superview: superview)
-//        setUpReplayBtn(superview: superview)
+        setUpUploadBtn(superview: superview)
         setUpMenuBtn(superview: superview)
-        setUpToolBox(superview: superview)
+//        setUpToolBox(superview: superview)
          ApiMiddleWare.createRoom(name: "test", limit: 100, room: RoomType.historied, callBack: callBack1)
     }
     func setUpWhiteboardView() -> Void {
@@ -81,21 +86,24 @@ class WhiteboardViewController: UIViewController {
 
     func callBack1(uuid: String, roomToken: String) -> Void {
         let roomConfig = WhiteRoomConfig(uuid: uuid, roomToken: roomToken)
-        self.sdk!.joinRoom(with: roomConfig, callbacks: self.roomCallbackDelegate, completionHandler:virrr)
+        self.sdk!.joinRoom(with: roomConfig, callbacks: self.roomCallbackDelegate, completionHandler:joinCallBack)
     }
     
-    func virrr(success: Bool, room: WhiteRoom?, error: Error?) -> Void {
-        print("sss\(success)")
-        print("sss\(success)")
+    func joinCallBack(success: Bool, room: WhiteRoom?, error: Error?) -> Void {
+        if (success) {
+            self.room = room
+            room?.getMemberState(result: { (WhiteMemberState) in
+                self.activeMemberState = WhiteMemberState
+                self.setUpToolBox()
+            })
+        }
     }
+    
     
     func setUpBoardControllerBox(superview: UIView) -> Void {
-        let boardControllerBtn = UIButton(type: UIButton.ButtonType.custom)
+        let boardControllerBtn = ButtonPrimary(type: UIButton.ButtonType.custom)
         let toolIcon = UIImage(named: "board")
         boardControllerBtn.setImage(toolIcon, for: .normal)
-        boardControllerBtn.layer.backgroundColor = Theme.mainColor.cgColor
-        boardControllerBtn.clipsToBounds = true
-        boardControllerBtn.layer.cornerRadius = 18
         boardControllerBtn.addTarget(self, action: #selector(goCreateRoomView), for: .touchUpInside)
         superview.addSubview(boardControllerBtn)
         boardControllerBtn.snp.makeConstraints({(make) -> Void in
@@ -106,11 +114,9 @@ class WhiteboardViewController: UIViewController {
     }
     
     func setUpShare(superview: UIView) -> Void {
-        let shareBtn = UIButton(type: UIButton.ButtonType.custom)
+        let shareBtn = ButtonPrimary(type: UIButton.ButtonType.custom)
         let toolIcon = UIImage(named: "add")
         shareBtn.setImage(toolIcon, for: .normal)
-        shareBtn.layer.backgroundColor = Theme.mainColor.cgColor
-        shareBtn.layer.cornerRadius = 18
         shareBtn.addTarget(self, action: #selector(goShareView), for: .touchUpInside)
         superview.addSubview(shareBtn)
         shareBtn.snp.makeConstraints({(make) -> Void in
@@ -126,12 +132,9 @@ class WhiteboardViewController: UIViewController {
     }
     
     func setUpSetBox(superview: UIView) -> Void {
-        let setBtn = UIButton(type: UIButton.ButtonType.custom)
+        let setBtn = ButtonPrimary(type: UIButton.ButtonType.custom)
         let toolIcon = UIImage(named: "more")
         setBtn.setImage(toolIcon, for: .normal)
-        setBtn.layer.backgroundColor = Theme.mainColor.cgColor
-        setBtn.clipsToBounds = true
-        setBtn.layer.cornerRadius = 18
         setBtn.addTarget(self, action: #selector(goSetView), for: .touchUpInside)
         superview.addSubview(setBtn)
         setBtn.snp.makeConstraints({(make) -> Void in
@@ -165,20 +168,65 @@ class WhiteboardViewController: UIViewController {
     @objc func goCreateRoomView() -> Void {
         self.navigationController?.popViewController(animated: true);
     }
-//    func setUpReplayBtn(superview: UIView) -> Void {
-//        let replayBtn = UIButton(type: UIButton.ButtonType.custom)
-//        let toolIcon = UIImage(named: "player")
-//        replayBtn.setImage(toolIcon, for: .normal)
-//        replayBtn.layer.borderColor = Theme.mainColor.cgColor
-//        replayBtn.layer.borderWidth = 1
-//        replayBtn.layer.cornerRadius = 18
-//        superview.addSubview(replayBtn)
-//        replayBtn.snp.makeConstraints({(make) -> Void in
-//            make.size.equalTo(CGSize(width: 36, height: 36))
-//            make.bottomMargin.equalTo(-28)
-//            make.leftMargin.equalTo(4)
-//        })
-//    }
+    
+    func setUpUploadBtn(superview: UIView) -> Void {
+        let uploadBtn = ButtonPrimary(type: UIButton.ButtonType.custom)
+        let toolIcon = UIImage(named: "upload")
+        uploadBtn.setImage(toolIcon, for: .normal)
+        uploadBtn.addTarget(self, action: #selector(alertFileView), for: .touchUpInside)
+        superview.addSubview(uploadBtn)
+        uploadBtn.snp.makeConstraints({(make) -> Void in
+            make.size.equalTo(CGSize(width: 36, height: 36))
+            make.bottomMargin.equalTo(-28)
+            make.leftMargin.equalTo(4)
+        })
+    }
+    
+    @objc func alertFileView() -> Void {
+        let controller = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let names = ["图片", "浏览"]
+        for name in names {
+            let action = UIAlertAction(title: name, style: .default) { (action) in
+                if (action.title == "图片") {
+                    let imagePickTool = CLImagePickerTool()
+                    imagePickTool.isHiddenVideo = true
+                    imagePickTool.navColor = Theme.mainColor
+                    imagePickTool.navTitleColor = UIColor.white
+                    imagePickTool.statusBarType = .white
+                    imagePickTool.cl_setupImagePickerWith(MaxImagesCount: 9, superVC: self) { (asset,cutImage) in
+                        print("返回的asset数组是\(asset)")
+                        print("返回的asset数组是\(String(describing: cutImage))")
+                    }
+                } else {
+                    let baseUrl = self.getiCloudDocumentURL()
+                    let manager = FileManager.default
+                    
+                    let urlForDocument = manager.urls(for: .documentDirectory, in:.userDomainMask)
+                    
+                    let url = urlForDocument[0] as URL
+                    
+                    if (baseUrl == nil) {
+                        let fileBrowser = FileBrowser(initialPath: url, allowEditing: true)
+                        self.present(fileBrowser, animated: true, completion: nil)
+                    } else {
+                        let fileBrowser = FileBrowser(initialPath: baseUrl, allowEditing: true)
+                        self.present(fileBrowser, animated: true, completion: nil)
+                    }
+                }
+            }
+            controller.addAction(action)
+        }
+        let cancelAction = UIAlertAction(title: "取消", style: .cancel, handler: nil)
+        controller.addAction(cancelAction)
+        present(controller, animated: true, completion: nil)
+    }
+    
+    func getiCloudDocumentURL() -> URL? {
+        if let url = FileManager.default.url(forUbiquityContainerIdentifier: nil) {
+            return url.appendingPathComponent("Documents") as URL
+        }
+        return nil
+    }
     
     func setUpMenuBtn(superview: UIView) -> Void {
         let menuBtn = UIButton(type: UIButton.ButtonType.custom)
@@ -200,41 +248,9 @@ class WhiteboardViewController: UIViewController {
         self.navigationController?.present(nav, animated: true, completion: nil);
     }
    
-    func setUpToolBox(superview: UIView) -> Void {
-        let toolBox = UIView()
-        toolBox.layer.cornerRadius = 4
-        toolBox.layer.borderWidth = 1
-        toolBox.layer.borderColor = Theme.mainGrayLight.cgColor
-        toolBox.clipsToBounds = true
-        superview.addSubview(toolBox)
-        toolBox.snp.makeConstraints({(make) -> Void in
-            make.size.equalTo(CGSize(width: 252, height: 36))
-            make.bottomMargin.equalTo(-28)
-            make.centerX.equalTo(superview)
-        })
-        setUpToolBoxCell(cellBox: toolBox)
-    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         self.navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
-    func setUpToolBoxCell(cellBox: UIView) -> Void {
-        for tool in toolDic {
-            let offsetX = (tool.value.index - 1) * 36
-            let button = ToolboxButton(type: UIButton.ButtonType.custom)
-            button.toolType = tool.key
-            let toolIcon = tool.value.iconView
-            button.backgroundColor = UIColor.white
-            button.setImage(toolIcon, for: .normal)
-            button.frame = CGRect(x: offsetX, y: 0, width: 36, height: 36)
-            button.addTarget(self, action: #selector(switchTools(tool:)), for: .touchUpInside)
-            cellBox.addSubview(button)
-        }
-    }
-    
-    @objc func switchTools(tool: ToolboxButton) -> Void {
-    print(tool.toolType!)
-    }
 }
-

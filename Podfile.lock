@@ -1,6 +1,12 @@
 PODS:
   - Alamofire (5.0.0-beta.6)
+  - AliyunOSSiOS (2.10.7)
+  - CLImagePickerTool (3.0.7)
   - dsBridge (3.0.6)
+  - FileBrowser (1.0.0)
+  - NVActivityIndicatorView (4.7.0):
+    - NVActivityIndicatorView/Presenter (= 4.7.0)
+  - NVActivityIndicatorView/Presenter (4.7.0)
   - SnapKit (5.0.0)
   - SwiftyJSON (4.3.0)
   - White-SDK-iOS (2.0.4):
@@ -10,6 +16,10 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire (~> 5.0.0-beta.5)
+  - AliyunOSSiOS
+  - CLImagePickerTool
+  - FileBrowser (~> 1.0)
+  - NVActivityIndicatorView
   - SnapKit (~> 5.0.0)
   - SwiftyJSON (~> 4.0)
   - White-SDK-iOS
@@ -17,7 +27,11 @@ DEPENDENCIES:
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - Alamofire
+    - AliyunOSSiOS
+    - CLImagePickerTool
     - dsBridge
+    - FileBrowser
+    - NVActivityIndicatorView
     - SnapKit
     - SwiftyJSON
     - White-SDK-iOS
@@ -25,12 +39,16 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   Alamofire: cd08a4402bd12cacd0c66f23fb12fec8d6b965e4
+  AliyunOSSiOS: 602b6a4e70e62a5f0a6431c20496343141d7e66f
+  CLImagePickerTool: 159e05efccd13dc86c6f762fa4751270501d109d
   dsBridge: 48b62ee8a411ad601a88d6f6c8cf6cb634b206b7
+  FileBrowser: 2ca91ff61c9ea09665eb3b8f9e64a7a77e66a0bf
+  NVActivityIndicatorView: b19ddab2576f805cbe0fb2306cba3476e09a1dea
   SnapKit: fd22d10eb9aff484d79a8724eab922c1ddf89bcf
   SwiftyJSON: 6faa0040f8b59dead0ee07436cbf76b73c08fd08
   White-SDK-iOS: 20fa943b889477dff7b063adfa4c7779dccf36e9
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
 
-PODFILE CHECKSUM: 5625141890bbece92670aacfbd1367dbc4c60fe3
+PODFILE CHECKSUM: 74103b213ce1c351978c01a86b69b12be3b4a1cf
 
 COCOAPODS: 1.7.1
