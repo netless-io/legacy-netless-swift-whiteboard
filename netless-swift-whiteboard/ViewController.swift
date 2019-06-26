@@ -17,7 +17,6 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "创建白板"
-        self.view.backgroundColor = UIColor.orange
         let superview = self.view!
         setUpLogoImage(superview: superview)
         setUpCreateButton(superview: superview)

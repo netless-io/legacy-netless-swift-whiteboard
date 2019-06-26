@@ -6,8 +6,10 @@
 //  Copyright © 2019 伍双. All rights reserved.
 //
 import UIKit
-import CLImagePickerTool
 import FileBrowser
+
+//import ImagePicker
+import Pickle
 
 class Tools{
     let index: Int
@@ -188,15 +190,9 @@ class WhiteboardViewController: UIViewController {
         for name in names {
             let action = UIAlertAction(title: name, style: .default) { (action) in
                 if (action.title == "图片") {
-                    let imagePickTool = CLImagePickerTool()
-                    imagePickTool.isHiddenVideo = true
-                    imagePickTool.navColor = Theme.mainColor
-                    imagePickTool.navTitleColor = UIColor.white
-                    imagePickTool.statusBarType = .white
-                    imagePickTool.cl_setupImagePickerWith(MaxImagesCount: 9, superVC: self) { (asset,cutImage) in
-                        print("返回的asset数组是\(asset)")
-                        print("返回的asset数组是\(String(describing: cutImage))")
-                    }
+                    let picker = ImagePickerController()
+                    picker.delegate = self as? ImagePickerControllerDelegate
+                    self.present(picker, animated: true, completion: nil)
                 } else {
                     let baseUrl = self.getiCloudDocumentURL()
                     let manager = FileManager.default

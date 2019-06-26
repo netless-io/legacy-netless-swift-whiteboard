@@ -6,8 +6,8 @@ target 'netless-swift-whiteboard' do
     pod 'White-SDK-iOS'
     pod 'Alamofire', '~> 5.0.0-beta.5'
     pod 'SwiftyJSON', '~> 4.0'
-    pod 'CLImagePickerTool'
     pod 'AliyunOSSiOS'
     pod 'FileBrowser', '~> 1.0'
     pod 'NVActivityIndicatorView'
+    pod 'Pickle'
 end
