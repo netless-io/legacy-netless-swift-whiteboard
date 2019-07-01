@@ -64,12 +64,10 @@ class WhiteboardViewController: UIViewController {
         let superview = self.view!
         setUpWhiteboardView()
         setUpBoardControllerBox(superview: superview)
-        setUpSetBox(superview: superview)
         setUpShare(superview: superview)
         setUpGoBackBtn(superview: superview)
         setUpUploadBtn(superview: superview)
         setUpMenuBtn(superview: superview)
-//        setUpToolBox(superview: superview)
         ApiMiddleWare.createRoom(name: "test", limit: 100, room: RoomType.historied, callBack: onRoomCreated)
     }
     
@@ -103,7 +101,6 @@ class WhiteboardViewController: UIViewController {
         }
     }
     
-    
     func setUpBoardControllerBox(superview: UIView) -> Void {
         let boardControllerBtn = ButtonPrimary(type: UIButton.ButtonType.custom)
         let toolIcon = UIImage(named: "board")
@@ -113,7 +110,7 @@ class WhiteboardViewController: UIViewController {
         boardControllerBtn.snp.makeConstraints({(make) -> Void in
             make.size.equalTo(CGSize(width: 36, height: 36))
             make.topMargin.equalTo(28)
-            make.rightMargin.equalTo(-100)
+            make.rightMargin.equalTo(-52)
         })
     }
     
@@ -126,7 +123,7 @@ class WhiteboardViewController: UIViewController {
         shareBtn.snp.makeConstraints({(make) -> Void in
             make.size.equalTo(CGSize(width: 36, height: 36))
             make.topMargin.equalTo(28)
-            make.rightMargin.equalTo(-52)
+            make.rightMargin.equalTo(-4)
         })
     }
     
@@ -134,25 +131,6 @@ class WhiteboardViewController: UIViewController {
         let nav = UINavigationController(rootViewController: InviteViewController())
         self.navigationController?.present(nav, animated: true, completion: nil);
     }
-    
-    func setUpSetBox(superview: UIView) -> Void {
-        let setBtn = ButtonPrimary(type: UIButton.ButtonType.custom)
-        let toolIcon = UIImage(named: "more")
-        setBtn.setImage(toolIcon, for: .normal)
-        setBtn.addTarget(self, action: #selector(goSetView), for: .touchUpInside)
-        superview.addSubview(setBtn)
-        setBtn.snp.makeConstraints({(make) -> Void in
-            make.size.equalTo(CGSize(width: 36, height: 36))
-            make.topMargin.equalTo(28)
-            make.rightMargin.equalTo(-4)
-        })
-    }
-    
-    @objc func goSetView() -> Void {
-        let nav = UINavigationController(rootViewController: SetViewController())
-        self.navigationController?.present(nav, animated: true, completion: nil);
-    }
-    
     
     func setUpGoBackBtn(superview: UIView) -> Void {
         let goBackBtn = UIButton(type: UIButton.ButtonType.custom)
@@ -169,6 +147,7 @@ class WhiteboardViewController: UIViewController {
             make.leftMargin.equalTo(4)
         })
     }
+    
     @objc func goCreateRoomView() -> Void {
         self.navigationController?.popViewController(animated: true);
     }
