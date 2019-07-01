@@ -36,8 +36,8 @@ enum ToolType: String {
     case rectangle = "rectangle"
 }
 
-
-class WhiteboardViewController: UIViewController {
+class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
+    
     var toolArray = ["selector", "pencil", "text", "upload", "eraser", "ellipse", "rectangle"]
     var toolDic: Dictionary<ToolType, Tools> = [
         ToolType.selector: Tools.init(index: 1, iconView: UIImage(named: ToolType.selector.rawValue)!, hasColor: false, hasStroke: false, isActive: false),
@@ -48,13 +48,16 @@ class WhiteboardViewController: UIViewController {
         ToolType.rectangle: Tools.init(index: 6, iconView: UIImage(named: ToolType.rectangle.rawValue)!, hasColor: true, hasStroke: true, isActive: false),
     ]
     
+    private var uuid: String = ""
+    
     var sdk: WhiteSDK?
     var boardView: WhiteBoardView?
     var room: WhiteRoom?
-    var activeMemberState: WhiteMemberState?
     var btnArray: [ToolboxButton] = []
     
-    weak var roomCallbackDelegate: WhiteRoomCallbackDelegate?
+    var activeMemberState: WhiteMemberState?
+    var viewMode: WhiteViewMode = WhiteViewMode.freedom
+    
     weak var commonCallbackDelegate: WhiteCommonCallbackDelegate?
     
     override func viewDidLoad() {
@@ -69,6 +72,13 @@ class WhiteboardViewController: UIViewController {
         setUpUploadBtn(superview: superview)
         setUpMenuBtn(superview: superview)
         ApiMiddleWare.createRoom(name: "test", limit: 100, room: RoomType.historied, callBack: onRoomCreated)
+    }
+    
+    @objc func fireRoomStateChanged(_ state: WhiteRoomState) -> Void {
+        
+        if let broadcastState = state.broadcastState {
+            self.viewMode = broadcastState.viewMode;
+        }
     }
     
     func setUpWhiteboardView() -> Void {
@@ -88,15 +98,19 @@ class WhiteboardViewController: UIViewController {
 
     func onRoomCreated(uuid: String, roomToken: String) -> Void {
         let roomConfig = WhiteRoomConfig(uuid: uuid, roomToken: roomToken)
-        self.sdk!.joinRoom(with: roomConfig, callbacks: self.roomCallbackDelegate, completionHandler:onReceiveJoinRoomResult)
+        self.uuid = uuid
+        self.sdk!.joinRoom(with: roomConfig, callbacks: self, completionHandler:onReceiveJoinRoomResult)
     }
     
     func onReceiveJoinRoomResult(success: Bool, room: WhiteRoom?, error: Error?) -> Void {
         if (success) {
             self.room = room
-            room?.getMemberState(result: { (WhiteMemberState) in
-                self.activeMemberState = WhiteMemberState
+            room?.getMemberState(result: { (state: WhiteMemberState) in
+                self.activeMemberState = state
                 self.setUpToolBox()
+            })
+            room?.getBroadcastState(result: { (state: WhiteBroadcastState) in
+                self.viewMode = state.viewMode
             })
         }
     }
@@ -105,7 +119,7 @@ class WhiteboardViewController: UIViewController {
         let boardControllerBtn = ButtonPrimary(type: UIButton.ButtonType.custom)
         let toolIcon = UIImage(named: "board")
         boardControllerBtn.setImage(toolIcon, for: .normal)
-        boardControllerBtn.addTarget(self, action: #selector(goCreateRoomView), for: .touchUpInside)
+        boardControllerBtn.addTarget(self, action: #selector(clickBroadControllerButton), for: .touchUpInside)
         superview.addSubview(boardControllerBtn)
         boardControllerBtn.snp.makeConstraints({(make) -> Void in
             make.size.equalTo(CGSize(width: 36, height: 36))
@@ -128,8 +142,18 @@ class WhiteboardViewController: UIViewController {
     }
     
     @objc func goShareView() -> Void {
-        let nav = UINavigationController(rootViewController: InviteViewController())
+        let viewController =  InviteViewController()
+        viewController.setSharedURL("https://demo.herewhite.com/#/zh-CN/whiteboard/" + self.uuid + "/")
+        let nav = UINavigationController(rootViewController: viewController)
         self.navigationController?.present(nav, animated: true, completion: nil);
+    }
+    
+    @objc func clickBroadControllerButton() -> Void {
+        if self.viewMode == WhiteViewMode.broadcaster {
+            self.room?.setViewMode(WhiteViewMode.freedom)
+        } else {
+            self.room?.setViewMode(WhiteViewMode.broadcaster)
+        }
     }
     
     func setUpGoBackBtn(superview: UIView) -> Void {
