@@ -21,7 +21,6 @@
 		6DDE2D4F22B4A6DF008519FE /* SenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDE2D4E22B4A6DF008519FE /* SenceViewController.swift */; };
 		6DDE2D5322B4D518008519FE /* InviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDE2D5222B4D518008519FE /* InviteViewController.swift */; };
 		6DDE2D5522B4D670008519FE /* SetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDE2D5422B4D670008519FE /* SetViewController.swift */; };
-		6DDE2D6422B9076F008519FE /* TokenConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDE2D6322B9076F008519FE /* TokenConfig.swift */; };
 		6DDE2D6622B9086B008519FE /* ApiMiddleWare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDE2D6522B9086B008519FE /* ApiMiddleWare.swift */; };
 		6DDE2D7122BB22F9008519FE /* ToolboxButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDE2D7022BB22F9008519FE /* ToolboxButton.swift */; };
 		6DDE2D7922BCB1E6008519FE /* ToolboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDE2D7822BCB1E6008519FE /* ToolboxView.swift */; };
@@ -71,7 +70,6 @@
 		6DDE2D4E22B4A6DF008519FE /* SenceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenceViewController.swift; sourceTree = "<group>"; };
 		6DDE2D5222B4D518008519FE /* InviteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteViewController.swift; sourceTree = "<group>"; };
 		6DDE2D5422B4D670008519FE /* SetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetViewController.swift; sourceTree = "<group>"; };
-		6DDE2D6322B9076F008519FE /* TokenConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenConfig.swift; sourceTree = "<group>"; };
 		6DDE2D6522B9086B008519FE /* ApiMiddleWare.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiMiddleWare.swift; sourceTree = "<group>"; };
 		6DDE2D7022BB22F9008519FE /* ToolboxButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolboxButton.swift; sourceTree = "<group>"; };
 		6DDE2D7822BCB1E6008519FE /* ToolboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolboxView.swift; sourceTree = "<group>"; };
@@ -156,7 +154,6 @@
 				6DDE2D5422B4D670008519FE /* SetViewController.swift */,
 				6D0DCC8422B365250027550D /* Theme.swift */,
 				6D0DCC8222B3518E0027550D /* Utils.swift */,
-				6DDE2D6322B9076F008519FE /* TokenConfig.swift */,
 				6DDE2D6522B9086B008519FE /* ApiMiddleWare.swift */,
 				6DDE2D7E22BDD413008519FE /* LoadingView.swift */,
 				6DA6EDCB22C9E69900613F82 /* Media.xcassets */,
@@ -415,7 +412,6 @@
 				6D0E1B0B22B2481C00CD4B4F /* ViewController.swift in Sources */,
 				6DDE2D6622B9086B008519FE /* ApiMiddleWare.swift in Sources */,
 				6DDE2D7B22BCB53A008519FE /* ButtonPrimary.swift in Sources */,
-				6DDE2D6422B9076F008519FE /* TokenConfig.swift in Sources */,
 				6D0DCC8522B365250027550D /* Theme.swift in Sources */,
 				6D0E1B0922B2481C00CD4B4F /* AppDelegate.swift in Sources */,
 				6D0DCC8322B3518E0027550D /* Utils.swift in Sources */,

@@ -70,8 +70,9 @@ class WhiteboardViewController: UIViewController {
         setUpUploadBtn(superview: superview)
         setUpMenuBtn(superview: superview)
 //        setUpToolBox(superview: superview)
-         ApiMiddleWare.createRoom(name: "test", limit: 100, room: RoomType.historied, callBack: callBack1)
+        ApiMiddleWare.createRoom(name: "test", limit: 100, room: RoomType.historied, callBack: onRoomCreated)
     }
+    
     func setUpWhiteboardView() -> Void {
         self.boardView = WhiteBoardView()
         self.view.addSubview(self.boardView!)
@@ -83,15 +84,16 @@ class WhiteboardViewController: UIViewController {
     
     func initSDK() -> Void {
         let config: WhiteSdkConfiguration = WhiteSdkConfiguration.defaultConfig()
+        config.debug = true
         self.sdk = WhiteSDK(whiteBoardView: self.boardView!, config: config, commonCallbackDelegate: self.commonCallbackDelegate)
     }
 
-    func callBack1(uuid: String, roomToken: String) -> Void {
+    func onRoomCreated(uuid: String, roomToken: String) -> Void {
         let roomConfig = WhiteRoomConfig(uuid: uuid, roomToken: roomToken)
-        self.sdk!.joinRoom(with: roomConfig, callbacks: self.roomCallbackDelegate, completionHandler:joinCallBack)
+        self.sdk!.joinRoom(with: roomConfig, callbacks: self.roomCallbackDelegate, completionHandler:onReceiveJoinRoomResult)
     }
     
-    func joinCallBack(success: Bool, room: WhiteRoom?, error: Error?) -> Void {
+    func onReceiveJoinRoomResult(success: Bool, room: WhiteRoom?, error: Error?) -> Void {
         if (success) {
             self.room = room
             room?.getMemberState(result: { (WhiteMemberState) in
