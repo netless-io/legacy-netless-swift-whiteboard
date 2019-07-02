@@ -37,7 +37,7 @@ enum ToolType: String {
 }
 
 protocol WhiteboardViewControllerDelegate: NSObject {
-    func fireReplay(uuid: String) -> Void
+    func fireReplay(uuid: String, roomToken: String) -> Void
 }
 
 class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
@@ -55,6 +55,7 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
     ]
     
     private var uuid: String = ""
+    private var roomToken: String = ""
     
     var sdk: WhiteSDK?
     var boardView: WhiteBoardView?
@@ -99,13 +100,13 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
     
     func initSDK() -> Void {
         let config: WhiteSdkConfiguration = WhiteSdkConfiguration.defaultConfig()
-        config.debug = true
         self.sdk = WhiteSDK(whiteBoardView: self.boardView!, config: config, commonCallbackDelegate: self.commonCallbackDelegate)
     }
 
     func onRoomCreated(uuid: String, roomToken: String) -> Void {
         let roomConfig = WhiteRoomConfig(uuid: uuid, roomToken: roomToken)
         self.uuid = uuid
+        self.roomToken = roomToken
         self.sdk!.joinRoom(with: roomConfig, callbacks: self, completionHandler:onReceiveJoinRoomResult)
     }
     
@@ -124,7 +125,8 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
     
     func setupReplayButton() -> Void {
         let replayButton = ButtonPrimary(type: UIButton.ButtonType.custom)
-        let replayIcon = UIImage(named: "add")
+        let replayIcon = UIImage(named: "player")?.maskWithColor(color: UIColor.white)
+        
         replayButton.setImage(replayIcon, for: .normal)
         replayButton.addTarget(self, action: #selector(clickReplay), for: .touchUpInside)
         self.view.addSubview(replayButton)
@@ -163,7 +165,7 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
     
     @objc func clickReplay() -> Void {
         self.goBackAndLeaveRoom()
-        self.delegate?.fireReplay(uuid: self.uuid)
+        self.delegate?.fireReplay(uuid: self.uuid, roomToken: self.roomToken)
     }
     
     @objc func goShareView() -> Void {

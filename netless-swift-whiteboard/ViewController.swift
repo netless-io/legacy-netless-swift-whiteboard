@@ -83,9 +83,10 @@ class ViewController: UIViewController, WhiteboardViewControllerDelegate {
         self.navigationController?.pushViewController(QRScannerViewController(), animated: true)
     }
     
-    func fireReplay(uuid: String) -> Void {
+    func fireReplay(uuid: String, roomToken: String) -> Void {
         let viewController = ReplayViewController()
         viewController.uuid = uuid
+        viewController.roomToken = roomToken
         self.navigationController?.pushViewController(viewController, animated: true)
     }
 }
