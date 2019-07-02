@@ -15,7 +15,7 @@ enum RoomType: String {
     case persisten = "persisten"
     case historied = "historied"
 }
-let token = "WHITEcGFydG5lcl9pZD0zZHlaZ1BwWUtwWVN2VDVmNGQ4UGI2M2djVGhncENIOXBBeTcmc2lnPTc1MTBkOWEwNzM1ZjA2MDYwMTMzODBkYjVlNTQ2NDA0OTAzOWU2NjE6YWRtaW5JZD0xNTgmcm9sZT1taW5pJmV4cGlyZV90aW1lPTE1OTAwNzM1NjEmYWs9M2R5WmdQcFlLcFlTdlQ1ZjRkOFBiNjNnY1RoZ3BDSDlwQXk3JmNyZWF0ZV90aW1lPTE1NTg1MTY2MDkmbm9uY2U9MTU1ODUxNjYwODYxNzAw"
+let token = "WHITEcGFydG5lcl9pZD1OZ3pwQWNBdlhiemJERW9NY0E0Z0V3RTUwbVZxM0NIbDJYV0Ymc2lnPWNiZWExOTMwNzc1NmQyNmU3N2U3M2Q0NWZjNTZiOGIwMWE2ZjU4NDI6YWRtaW5JZD0yMTYmcm9sZT1hZG1pbiZleHBpcmVfdGltZT0xNTg5ODMzNTQxJmFrPU5nenBBY0F2WGJ6YkRFb01jQTRnRXdFNTBtVnEzQ0hsMlhXRiZjcmVhdGVfdGltZT0xNTU4Mjc2NTg5Jm5vbmNlPTE1NTgyNzY1ODg4NDQwMA"
 let baseUrl = "https://cloudcapiv4.herewhite.com"
 let headers: HTTPHeaders = [
     "Accept": "application/json"
@@ -23,20 +23,18 @@ let headers: HTTPHeaders = [
 class ApiMiddleWare {
 
     static func createRoom(name: String, limit: Int, room: RoomType, callBack: @escaping (_ uuid: String, _ roomToken: String) -> Void) -> Void {
-        AF.request("\(baseUrl)/room?token=\(token)", method: .post,
-                   parameters: ["name": name, "limit": limit, "mode": room],
-                   headers: headers).responseJSON { response in
-                    if let result = response.value {
-                        let json = JSON(result)
-                        print(result)
-                        print("room:\(json["msg"]["room"]["uuid"])")
-                        let uuid = json["msg"]["room"]["uuid"].string!
-                        let roomToken = json["msg"]["roomToken"].string!
-                        callBack(uuid, roomToken)
-//                        callBack(json["msg"]["room"]["uuid"], json["msg"]["roomToken"])
-                    }
-//                   print("Result: \(response.result["msg"]["roomToken"])")
-        }
+    
+        let url = "\(baseUrl)/room?token=\(token)"
+        let parameters: [String: Any] = ["name": name, "limit": limit, "mode": room]
+        let request = AF.request(url, method: .post, parameters:parameters , headers: headers)
         
+        request.responseJSON { response in
+            if let result = response.value {
+                let json = JSON(result)
+                let uuid = json["msg"]["room"]["uuid"].string!
+                let roomToken = json["msg"]["roomToken"].string!
+                callBack(uuid, roomToken)
+            }
+        }
     }
 }

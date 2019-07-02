@@ -9,21 +9,27 @@
 import UIKit
 
 class InviteViewController: UIViewController {
+    
+    private var sharedURL: String = ""
+    
+    public func setSharedURL(_ sharedURL: String) {
+        self.sharedURL = sharedURL
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "邀请加入"
-        let superview = self.view!
         let nav = self.navigationController?.navigationBar
         nav?.barStyle = UIBarStyle.black
         nav?.barTintColor = Theme.mainColor
         nav?.tintColor = UIColor.white
-        superview.backgroundColor = UIColor.white
-        setUpLeftBtn(superview: superview)
-        setUpQRCode(superview: superview)
-        setUpShareUrl(superview: superview)
+        self.view.backgroundColor = UIColor.white
+        setUpLeftBtn()
+        setUpQRCode()
+        setUpShareUrl()
     }
     
-    func setUpShareUrl(superview: UIView) -> Void {
+    func setUpShareUrl() -> Void {
         let shareBox = UIView()
         shareBox.layer.cornerRadius = 4
         shareBox.layer.borderColor = Theme.mainColor.cgColor
@@ -31,17 +37,17 @@ class InviteViewController: UIViewController {
         shareBox.clipsToBounds = true
         setUpInput(shareBox: shareBox)
         setUpSBtn(shareBox: shareBox)
-        superview.addSubview(shareBox)
+        self.view.addSubview(shareBox)
         shareBox.snp.makeConstraints { (make) -> Void in
             make.size.equalTo(CGSize(width: 280, height: 42))
-            make.centerX.equalTo(superview)
+            make.centerX.equalTo(self.view)
             make.centerYWithinMargins.equalTo(40)
         }
     }
     
     func setUpInput(shareBox: UIView) -> Void {
         let urlInput = UITextView(frame: CGRect(x: 0, y: 0, width: 200, height: 42))
-        urlInput.text = "https://www.netless.link/"
+        urlInput.text = sharedURL
         urlInput.font = UIFont.systemFont(ofSize: 18)
         urlInput.isEditable = false
         shareBox.addSubview(urlInput)
@@ -52,23 +58,27 @@ class InviteViewController: UIViewController {
         urlBtn.setTitle("复制", for: .selected)
         urlBtn.setTitle("复制", for: .normal)
         urlBtn.setTitleColor(UIColor.white, for: .normal)
+        urlBtn.addTarget(self, action: #selector(clickCopyButton), for: .touchUpInside)
         urlBtn.backgroundColor = Theme.mainColor
         shareBox.addSubview(urlBtn)
     }
     
-    func setUpQRCode(superview: UIView) -> Void {
+    @objc func clickCopyButton() -> Void {
+        UIPasteboard.general.string = self.sharedURL
+    }
+    
+    func setUpQRCode() -> Void {
         let QRImage = UIImageView()
-//        QRImage.image = UIImage(named: "head_image")
-        QRCodeUtil.setQRCodeToImageView(QRImage, "www.netless.link", nil)
-        superview.addSubview(QRImage)
+        QRCodeUtil.setQRCodeToImageView(QRImage, sharedURL, nil)
+        self.view.addSubview(QRImage)
         QRImage.snp.makeConstraints { (make) -> Void in
             make.size.equalTo(CGSize(width: 160, height: 160))
-            make.centerX.equalTo(superview)
+            make.centerX.equalTo(self.view)
             make.centerYWithinMargins.equalTo(-120)
         }
     }
     
-    func setUpLeftBtn(superview: UIView) -> Void {
+    func setUpLeftBtn() -> Void {
         let rightBtn = UIBarButtonItem(title: "完成", style: .plain, target: self, action: #selector(goToWhiteboard))
         self.navigationItem.rightBarButtonItem = rightBtn
     }

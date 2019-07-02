@@ -7,6 +7,7 @@
 //
 
 extension WhiteboardViewController {
+    
     func setUpToolBox() -> Void {
         let toolBox = UIView()
         toolBox.layer.cornerRadius = 4
@@ -21,6 +22,7 @@ extension WhiteboardViewController {
         })
         setUpToolBoxCell(cellBox: toolBox)
     }
+    
     func setUpToolBoxCell(cellBox: UIView) -> Void {
         let activeTool: String = self.activeMemberState!.jsonDict()["currentApplianceName"] as! String;
         for tool in toolDic {
