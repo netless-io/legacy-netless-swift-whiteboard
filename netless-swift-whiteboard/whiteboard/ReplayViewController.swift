@@ -13,7 +13,11 @@ class ReplayViewController: ViewController, WhitePlayerEventDelegate {
     public var roomToken: String?
     
     private var boardView: WhiteBoardView?
+    private var playButton: UIButton?
+    private var slider: UISlider?
+    
     private var player: WhitePlayer?
+    private var timeDuration: TimeInterval?
     
     override func viewDidLoad() {
         self.title = "白板回放"
@@ -21,6 +25,7 @@ class ReplayViewController: ViewController, WhitePlayerEventDelegate {
         
         self.setupBoardView()
         self.setupPlayButton()
+        self.setupSlider()
         self.setupPlayer()
     }
     
@@ -43,11 +48,25 @@ class ReplayViewController: ViewController, WhitePlayerEventDelegate {
             make.bottomMargin.equalTo(-28)
             make.leftMargin.equalTo(4)
         })
+        self.playButton = playButton
+    }
+    
+    func setupSlider() -> Void {
+        let slider = UISlider()
+        slider.minimumValue = 0
+        slider.maximumValue = 1
+        slider.value = 0
+        self.view.addSubview(slider)
+        slider.snp.makeConstraints {(make) in
+            make.centerY.equalTo(self.playButton!)
+            make.leftMargin.equalTo(44)
+            make.rightMargin.equalTo(-4)
+        }
+        self.slider = slider
     }
     
     private func setupPlayer() -> Void {
         let sdkConfig: WhiteSdkConfiguration = WhiteSdkConfiguration.defaultConfig()
-        sdkConfig.debug = true
         let sdk = WhiteSDK(whiteBoardView: self.boardView!, config: sdkConfig, commonCallbackDelegate:nil)
         let replayerConfig = WhitePlayerConfig(room: self.uuid!, roomToken: self.roomToken!)
         
@@ -58,13 +77,17 @@ class ReplayViewController: ViewController, WhitePlayerEventDelegate {
                 self.player = player
                 self.player!.seek(toScheduleTime: 0)
 //                self.player!.play()
-                print("success", player)
+                player?.getTimeInfo(result: {(info) in
+                    self.timeDuration = info.timeDuration
+                })
             }
         });
     }
     
     func scheduleTimeChanged(_ time: TimeInterval) {
-        print("progress", time)
+        if let timeDuration = self.timeDuration {
+            self.slider?.value = Float(time / timeDuration)
+        }
     }
     
     func stoppedWithError(_ error: Error) {
@@ -76,7 +99,6 @@ class ReplayViewController: ViewController, WhitePlayerEventDelegate {
     }
     
     @objc private func onClickPlayButton() {
-        print("play")
     	self.player?.play()
     }
 }
