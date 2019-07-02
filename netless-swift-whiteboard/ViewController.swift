@@ -9,11 +9,8 @@
 import UIKit
 import SnapKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, WhiteboardViewControllerDelegate {
 
-//    let uuid: String
-//    let roomToken: String
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "创建白板"
@@ -65,7 +62,6 @@ class ViewController: UIViewController {
         self.navigationController?.setNavigationBarHidden(false, animated: true)
     }
 
-    
     func setUpLogoImage(superview: UIView) -> Void {
         let logoImage = UIImageView()
         logoImage.image = UIImage(named: "netless_black")
@@ -78,11 +74,19 @@ class ViewController: UIViewController {
     }
     
     @objc func goToWhiteboard() -> Void {
-        self.navigationController?.pushViewController(WhiteboardViewController(), animated: true);
+        let viewController = WhiteboardViewController()
+        viewController.delegate = self
+        self.navigationController?.pushViewController(viewController, animated: true)
     }
     
     @objc func scanQRCode() -> Void {
-        self.navigationController?.pushViewController(QRScannerViewController(), animated: true);
+        self.navigationController?.pushViewController(QRScannerViewController(), animated: true)
+    }
+    
+    func fireReplay(uuid: String) -> Void {
+        let viewController = ReplayViewController()
+        viewController.uuid = uuid
+        self.navigationController?.pushViewController(viewController, animated: true)
     }
 }
 

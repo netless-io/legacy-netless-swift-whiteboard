@@ -36,7 +36,13 @@ enum ToolType: String {
     case rectangle = "rectangle"
 }
 
+protocol WhiteboardViewControllerDelegate: NSObject {
+    func fireReplay(uuid: String) -> Void
+}
+
 class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
+    
+    public weak var delegate: WhiteboardViewControllerDelegate?
     
     var toolArray = ["selector", "pencil", "text", "upload", "eraser", "ellipse", "rectangle"]
     var toolDic: Dictionary<ToolType, Tools> = [
@@ -66,6 +72,7 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         self.view.backgroundColor = UIColor.white
         let superview = self.view!
         setUpWhiteboardView()
+        setupReplayButton()
         setUpBoardControllerBox(superview: superview)
         setUpShare(superview: superview)
         setUpGoBackBtn(superview: superview)
@@ -115,6 +122,19 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         }
     }
     
+    func setupReplayButton() -> Void {
+        let replayButton = ButtonPrimary(type: UIButton.ButtonType.custom)
+        let replayIcon = UIImage(named: "add")
+        replayButton.setImage(replayIcon, for: .normal)
+        replayButton.addTarget(self, action: #selector(clickReplay), for: .touchUpInside)
+        self.view.addSubview(replayButton)
+        replayButton.snp.makeConstraints({(make) -> Void in
+            make.size.equalTo(CGSize(width: 36, height: 36))
+            make.topMargin.equalTo(28)
+            make.rightMargin.equalTo(-100)
+        })
+    }
+    
     func setUpBoardControllerBox(superview: UIView) -> Void {
         let boardControllerBtn = ButtonPrimary(type: UIButton.ButtonType.custom)
         let toolIcon = UIImage(named: "board")
@@ -141,6 +161,11 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         })
     }
     
+    @objc func clickReplay() -> Void {
+        self.goBackAndLeaveRoom()
+        self.delegate?.fireReplay(uuid: self.uuid)
+    }
+    
     @objc func goShareView() -> Void {
         let viewController =  InviteViewController()
         viewController.setSharedURL("https://demo.herewhite.com/#/zh-CN/whiteboard/" + self.uuid + "/")
@@ -163,7 +188,7 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         goBackBtn.layer.borderColor = Theme.mainGrayLight.cgColor
         goBackBtn.layer.borderWidth = 1
         goBackBtn.layer.cornerRadius = 18
-        goBackBtn.addTarget(self, action: #selector(goCreateRoomView), for: .touchUpInside)
+        goBackBtn.addTarget(self, action: #selector(goBackAndLeaveRoom), for: .touchUpInside)
         superview.addSubview(goBackBtn)
         goBackBtn.snp.makeConstraints({(make) -> Void in
             make.size.equalTo(CGSize(width: 36, height: 36))
@@ -172,8 +197,9 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         })
     }
     
-    @objc func goCreateRoomView() -> Void {
+    @objc func goBackAndLeaveRoom() -> Void {
         self.navigationController?.popViewController(animated: true);
+        self.room?.disconnect({})
     }
     
     func setUpUploadBtn(superview: UIView) -> Void {
