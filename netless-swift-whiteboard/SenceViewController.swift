@@ -9,6 +9,7 @@
 import UIKit
 
 class SenceViewController: UIViewController {
+    
     var tableView = UITableView()
     var dataArr = NSMutableArray()
     
@@ -65,6 +66,7 @@ class SenceViewController: UIViewController {
 }
 
 extension SenceViewController: UITableViewDataSource, UITableViewDelegate {
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cellID = "cell";
         let cell = UITableViewCell(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: cellID)
@@ -88,16 +90,12 @@ extension SenceViewController: UITableViewDataSource, UITableViewDelegate {
         return dataArr.count;
     }
     
-    
-    
     //cell高度
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat{
         return 160
     }
 
-
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("点击了\(indexPath.row)")
     }
-    
 }

@@ -24,6 +24,7 @@ class ReplayViewController: ViewController, WhitePlayerEventDelegate {
         self.view.backgroundColor = UIColor.white
         
         self.setupBoardView()
+        self.setupGoBackBtn()
         self.setupPlayButton()
         self.setupSlider()
         self.setupPlayer()
@@ -37,11 +38,27 @@ class ReplayViewController: ViewController, WhitePlayerEventDelegate {
         })
     }
     
+    func setupGoBackBtn() -> Void {
+        let goBackBtn = UIButton(type: UIButton.ButtonType.custom)
+        let toolIcon = UIImage(named: "back")
+        goBackBtn.setImage(toolIcon, for: .normal)
+        goBackBtn.layer.borderColor = Theme.mainGrayLight.cgColor
+        goBackBtn.layer.borderWidth = 1
+        goBackBtn.layer.cornerRadius = 18
+        goBackBtn.addTarget(self, action: #selector(clickGoBack), for: .touchUpInside)
+        self.view.addSubview(goBackBtn)
+        goBackBtn.snp.makeConstraints({(make) -> Void in
+            make.size.equalTo(CGSize(width: 36, height: 36))
+            make.topMargin.equalTo(28)
+            make.leftMargin.equalTo(4)
+        })
+    }
+    
     func setupPlayButton() -> Void {
         let playButton = ButtonPrimary(type: UIButton.ButtonType.custom)
         let playIcon = UIImage(named: "player")?.maskWithColor(color: UIColor.white)
         playButton.setImage(playIcon, for: .normal)
-        playButton.addTarget(self, action: #selector(onClickPlayButton), for: .touchUpInside)
+        playButton.addTarget(self, action: #selector(clickPlayButton), for: .touchUpInside)
         self.view.addSubview(playButton)
         playButton.snp.makeConstraints({(make) -> Void in
             make.size.equalTo(CGSize(width: 36, height: 36))
@@ -98,7 +115,12 @@ class ReplayViewController: ViewController, WhitePlayerEventDelegate {
         print(phase)
     }
     
-    @objc private func onClickPlayButton() {
+    @objc private func clickPlayButton() {
     	self.player?.play()
+    }
+    
+    @objc func clickGoBack() -> Void {
+        self.navigationController?.popViewController(animated: true);
+        self.player?.stop()
     }
 }
