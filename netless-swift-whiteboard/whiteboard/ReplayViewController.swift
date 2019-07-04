@@ -16,6 +16,10 @@ class ReplayViewController: ViewController, WhitePlayerEventDelegate {
     private var playButton: UIButton?
     private var slider: UISlider?
     
+    private var sliderValue: Float?
+    private var isSliderDragging: Bool = false
+    private var isPlaying: Bool = false
+    
     private var player: WhitePlayer?
     private var timeDuration: TimeInterval?
     
@@ -73,6 +77,10 @@ class ReplayViewController: ViewController, WhitePlayerEventDelegate {
         slider.minimumValue = 0
         slider.maximumValue = 1
         slider.value = 0
+        slider.addTarget(self, action: #selector(onSliderValueChanged), for: .valueChanged)
+        slider.addTarget(self, action: #selector(onSliderWillChanged), for: .touchDown)
+        slider.addTarget(self, action: #selector(onSliderDidChanged), for: .touchUpInside)
+        slider.addTarget(self, action: #selector(onSliderDidChanged), for: .touchUpOutside)
         self.view.addSubview(slider)
         slider.snp.makeConstraints {(make) in
             make.centerY.equalTo(self.playButton!)
@@ -80,6 +88,23 @@ class ReplayViewController: ViewController, WhitePlayerEventDelegate {
             make.rightMargin.equalTo(-4)
         }
         self.slider = slider
+    }
+    
+    @objc func onSliderWillChanged() -> Void {
+        self.isSliderDragging = true
+        self.sliderValue = nil
+    }
+    
+    @objc func onSliderDidChanged() -> Void {
+        self.isSliderDragging = false
+        if let value = self.sliderValue {
+            self.slider?.value = value
+        }
+    }
+    
+    @objc func onSliderValueChanged() -> Void {
+        self.sliderValue = self.slider?.value
+        self.player!.seek(toScheduleTime: Double(self.sliderValue!) * self.timeDuration!)
     }
     
     private func setupPlayer() -> Void {
@@ -93,7 +118,6 @@ class ReplayViewController: ViewController, WhitePlayerEventDelegate {
             if (success) {
                 self.player = player
                 self.player!.seek(toScheduleTime: 0)
-//                self.player!.play()
                 player?.getTimeInfo(result: {(info) in
                     self.timeDuration = info.timeDuration
                 })
@@ -102,7 +126,7 @@ class ReplayViewController: ViewController, WhitePlayerEventDelegate {
     }
     
     func scheduleTimeChanged(_ time: TimeInterval) {
-        if let timeDuration = self.timeDuration {
+        if !self.isSliderDragging, let timeDuration = self.timeDuration {
             self.slider?.value = Float(time / timeDuration)
         }
     }
@@ -116,7 +140,17 @@ class ReplayViewController: ViewController, WhitePlayerEventDelegate {
     }
     
     @objc private func clickPlayButton() {
-    	self.player?.play()
+        var playerIcon: UIImage
+        
+        if self.isPlaying {
+            self.player?.pause()
+            playerIcon = UIImage(named: "player")!.maskWithColor(color: UIColor.white)
+        } else {
+            self.player?.play()
+            playerIcon = UIImage(named: "pause")!.maskWithColor(color: UIColor.white)
+        }
+        self.isPlaying = !self.isPlaying
+        self.playButton?.setImage(playerIcon, for: .normal)
     }
     
     @objc func clickGoBack() -> Void {
