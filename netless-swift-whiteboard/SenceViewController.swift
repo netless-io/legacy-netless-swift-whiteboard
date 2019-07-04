@@ -10,8 +10,15 @@ import UIKit
 
 class SenceViewController: UIViewController {
     
-    var tableView = UITableView()
-    var dataArr = NSMutableArray()
+    private var tableView = UITableView()
+    private var scenes: Array<WhiteScene> = []
+    private var sceneIndex: Int = 0
+    
+    public func updateSceneState(sceneState: WhiteSceneState) -> Void {
+        self.scenes = sceneState.scenes
+        self.sceneIndex = sceneState.index
+        self.tableView.reloadData()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,24 +29,19 @@ class SenceViewController: UIViewController {
         nav?.barTintColor = Theme.mainColor
         nav?.tintColor = UIColor.white
         superview.backgroundColor = Theme.bgGray
-        dataArr = ["1","2","3","4","5","6","7","8","9","10"]
-        setUpSence(superview: superview)
+        
+        setUpSence()
         setUpLeftBtn(superview: superview)
         
-        // 1.创建tableView,并添加的控制器的view
         tableView = UITableView(frame: view.bounds)
-        
-        // 2.设置数据源代理
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
-        // 3.添加到控制器的view
         self.view.addSubview(tableView)
-        
     }
     
     func setUpLeftBtn(superview: UIView) -> Void {
-        let leftBtn = UIBarButtonItem(title: "加一页", style: .plain, target: self, action: nil)
+        let leftBtn = UIBarButtonItem(title: "加一页", style: .plain, target: self, action: #selector(addSence))
         let rightBtn = UIBarButtonItem(title: "完成", style: .plain, target: self, action: #selector(goToWhiteboard))
         self.navigationItem.leftBarButtonItem = leftBtn
         self.navigationItem.rightBarButtonItem = rightBtn
@@ -53,14 +55,14 @@ class SenceViewController: UIViewController {
         
     }
     
-    func setUpSence(superview: UIView) -> Void {
+    func setUpSence() -> Void {
         let sence = UIView();
         sence.backgroundColor = UIColor.red
-        superview.addSubview(sence)
+        self.view.addSubview(sence)
         sence.snp.makeConstraints { (make) -> Void in
             make.size.equalTo(CGSize(width: 240, height: 160))
             make.centerYWithinMargins.equalTo(120)
-            make.centerX.equalTo(superview)
+            make.centerX.equalTo(self.view)
         }
     }
 }
@@ -68,9 +70,9 @@ class SenceViewController: UIViewController {
 extension SenceViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellID = "cell";
+        let cellID = "cell_" + String(indexPath.row);
         let cell = UITableViewCell(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: cellID)
-        cell.textLabel?.text = String(dataArr[indexPath.row] as! String)
+        cell.textLabel?.text = String(String(indexPath.row))
         cell.backgroundColor = Theme.bgGray
         setUpCellInner(cell: cell)
         return cell
@@ -87,7 +89,7 @@ extension SenceViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dataArr.count;
+        return self.scenes.count;
     }
     
     //cell高度
@@ -96,6 +98,6 @@ extension SenceViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("点击了\(indexPath.row)")
+        
     }
 }

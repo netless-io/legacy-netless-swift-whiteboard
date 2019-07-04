@@ -59,6 +59,7 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
     
     var sdk: WhiteSDK?
     var boardView: WhiteBoardView?
+    var sceneViewController: SenceViewController?
     var room: WhiteRoom?
     var btnArray: [ToolboxButton] = []
     
@@ -71,6 +72,8 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         super.viewDidLoad()
         self.title = "互动白板"
         self.view.backgroundColor = UIColor.white
+        self.sceneViewController = SenceViewController()
+        
         let superview = self.view!
         setUpWhiteboardView()
         setupReplayButton()
@@ -86,6 +89,9 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         
         if let broadcastState = state.broadcastState {
             self.viewMode = broadcastState.viewMode;
+        }
+        if let sceneState = state.sceneState {
+            self.sceneViewController?.updateSceneState(sceneState: sceneState)
         }
     }
     
@@ -119,6 +125,9 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
             })
             room?.getBroadcastState(result: { (state: WhiteBroadcastState) in
                 self.viewMode = state.viewMode
+            })
+            room?.getSceneState(result: { (state) in
+                self.sceneViewController?.updateSceneState(sceneState: state)
             })
         }
     }
@@ -273,7 +282,7 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
     }
     
     @objc func goSenceView() -> Void {
-        let nav = UINavigationController(rootViewController: SenceViewController())
+        let nav = UINavigationController(rootViewController: self.sceneViewController!)
         self.navigationController?.present(nav, animated: true, completion: nil);
     }
    
@@ -281,5 +290,4 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         super.viewWillAppear(true)
         self.navigationController?.setNavigationBarHidden(true, animated: true)
     }
-    
 }
