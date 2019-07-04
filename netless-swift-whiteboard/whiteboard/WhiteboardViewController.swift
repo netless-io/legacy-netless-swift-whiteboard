@@ -301,12 +301,12 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         
         previousButton.snp.makeConstraints({(make) -> Void in
             make.size.equalTo(CGSize(width: 36, height: 36))
-            make.bottomMargin.equalTo(-72)
+            make.bottomMargin.equalTo(-116)
             make.rightMargin.equalTo(-4)
         })
         nextButton.snp.makeConstraints({(make) -> Void in
             make.size.equalTo(CGSize(width: 36, height: 36))
-            make.bottomMargin.equalTo(-116)
+            make.bottomMargin.equalTo(-72)
             make.rightMargin.equalTo(-4)
         })
         previousButton.addTarget(self, action: #selector(clickPreviousButton), for: .touchUpInside)
