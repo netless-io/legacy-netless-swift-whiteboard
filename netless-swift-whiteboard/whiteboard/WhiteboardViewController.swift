@@ -82,6 +82,7 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         setUpGoBackBtn(superview: superview)
         setUpUploadBtn(superview: superview)
         setUpMenuBtn(superview: superview)
+        setupSceneOperationButtons()
         ApiMiddleWare.createRoom(name: "test", limit: 100, room: RoomType.historied, callBack: onRoomCreated)
     }
     
@@ -283,9 +284,46 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         })
     }
     
+    func setupSceneOperationButtons() -> Void {
+        let previousButton = UIButton(type: .custom)
+        let nextButton = UIButton(type: .custom)
+        
+        self.view.addSubview(previousButton)
+        self.view.addSubview(nextButton)
+        
+        previousButton.setImage(UIImage(named: "up")!.maskWithColor(color: .white), for: .normal)
+        previousButton.layer.backgroundColor = Theme.mainColor.cgColor
+        previousButton.layer.cornerRadius = 18
+        
+        nextButton.setImage(UIImage(named: "down")!.maskWithColor(color: .white), for: .normal)
+        nextButton.layer.backgroundColor = Theme.mainColor.cgColor
+        nextButton.layer.cornerRadius = 18
+        
+        previousButton.snp.makeConstraints({(make) -> Void in
+            make.size.equalTo(CGSize(width: 36, height: 36))
+            make.bottomMargin.equalTo(-72)
+            make.rightMargin.equalTo(-4)
+        })
+        nextButton.snp.makeConstraints({(make) -> Void in
+            make.size.equalTo(CGSize(width: 36, height: 36))
+            make.bottomMargin.equalTo(-116)
+            make.rightMargin.equalTo(-4)
+        })
+        previousButton.addTarget(self, action: #selector(clickPreviousButton), for: .touchUpInside)
+        nextButton.addTarget(self, action: #selector(clickNextButton), for: .touchUpInside)
+    }
+    
     @objc func goSenceView() -> Void {
         let nav = UINavigationController(rootViewController: self.sceneViewController!)
         self.navigationController?.present(nav, animated: true, completion: nil);
+    }
+    
+    @objc func clickPreviousButton() -> Void {
+        self.room?.pptPreviousStep()
+    }
+    
+    @objc func clickNextButton() -> Void {
+        self.room?.pptNextStep()
     }
    
     override func viewWillAppear(_ animated: Bool) {
