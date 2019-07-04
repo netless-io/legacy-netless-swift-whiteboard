@@ -119,6 +119,8 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
     func onReceiveJoinRoomResult(success: Bool, room: WhiteRoom?, error: Error?) -> Void {
         if (success) {
             self.room = room
+            self.sceneViewController?.room = room
+            
             room?.getMemberState(result: { (state: WhiteMemberState) in
                 self.activeMemberState = state
                 self.setUpToolBox()
