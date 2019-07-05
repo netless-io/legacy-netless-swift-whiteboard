@@ -9,7 +9,7 @@ PODS:
   - Pickle (1.4.0)
   - SnapKit (5.0.0)
   - SwiftyJSON (4.3.0)
-  - White-SDK-iOS (2.1.3):
+  - White-SDK-iOS (2.3.1):
     - dsBridge (~> 3.0.2)
     - YYModel (~> 1.0.4)
   - YYModel (1.0.4)
@@ -22,7 +22,7 @@ DEPENDENCIES:
   - Pickle
   - SnapKit (~> 5.0.0)
   - SwiftyJSON (~> 4.0)
-  - White-SDK-iOS (~> 2.1.3)
+  - White-SDK-iOS (~> 2.3.1)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -46,9 +46,9 @@ SPEC CHECKSUMS:
   Pickle: 28753955cbcd9cc1a7b44624e49c61e182f3bbd7
   SnapKit: fd22d10eb9aff484d79a8724eab922c1ddf89bcf
   SwiftyJSON: 6faa0040f8b59dead0ee07436cbf76b73c08fd08
-  White-SDK-iOS: cd01dd82339eedd79f011931080dcef255c1247c
+  White-SDK-iOS: 18430a2e26ab252127fe19604c2b7ca71f5edb26
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
 
-PODFILE CHECKSUM: d0a82b7ec92fafd3d5513f26d52ee815cbf65c4e
+PODFILE CHECKSUM: 4502c5a2723c1d5549ead35cd9e44fc9dbe8ca09
 
 COCOAPODS: 1.7.3

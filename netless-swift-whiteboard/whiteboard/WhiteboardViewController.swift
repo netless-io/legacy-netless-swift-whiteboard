@@ -43,6 +43,8 @@ protocol WhiteboardViewControllerDelegate: NSObject {
 class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
     
     public weak var delegate: WhiteboardViewControllerDelegate?
+    public var uuid: String?
+    private var roomToken: String = ""
     
     var toolArray = ["selector", "pencil", "text", "upload", "eraser", "ellipse", "rectangle"]
     var toolDic: Dictionary<ToolType, Tools> = [
@@ -54,11 +56,9 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         ToolType.rectangle: Tools.init(index: 6, iconView: UIImage(named: ToolType.rectangle.rawValue)!, hasColor: true, hasStroke: true, isActive: false),
     ]
     
-    private var uuid: String = ""
-    private var roomToken: String = ""
-    
     var sdk: WhiteSDK?
     var boardView: WhiteBoardView?
+    var sceneViewController: SenceViewController?
     var room: WhiteRoom?
     var btnArray: [ToolboxButton] = []
     
@@ -71,6 +71,8 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         super.viewDidLoad()
         self.title = "互动白板"
         self.view.backgroundColor = UIColor.white
+        self.sceneViewController = SenceViewController()
+        
         let superview = self.view!
         setUpWhiteboardView()
         setupReplayButton()
@@ -79,13 +81,22 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         setUpGoBackBtn(superview: superview)
         setUpUploadBtn(superview: superview)
         setUpMenuBtn(superview: superview)
-        ApiMiddleWare.createRoom(name: "test", limit: 100, room: RoomType.historied, callBack: onRoomCreated)
+        setupSceneOperationButtons()
+        
+        if self.uuid != nil {
+            ApiMiddleWare.joinRoom(uuid: self.uuid!, callback: onRoomJoined)
+        } else {
+            ApiMiddleWare.createRoom(name: "test", limit: 100, room: RoomType.historied, callBack: onRoomCreated)
+        }
     }
     
     @objc func fireRoomStateChanged(_ state: WhiteRoomState) -> Void {
         
         if let broadcastState = state.broadcastState {
             self.viewMode = broadcastState.viewMode;
+        }
+        if let sceneState = state.sceneState {
+            self.sceneViewController?.updateSceneState(sceneState: sceneState)
         }
     }
     
@@ -110,15 +121,26 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         self.sdk!.joinRoom(with: roomConfig, callbacks: self, completionHandler:onReceiveJoinRoomResult)
     }
     
+    func onRoomJoined(roomToken: String) -> Void {
+        let roomConfig = WhiteRoomConfig(uuid: self.uuid!, roomToken: roomToken)
+        self.roomToken = roomToken
+        self.sdk!.joinRoom(with: roomConfig, callbacks: self, completionHandler:onReceiveJoinRoomResult)
+    }
+    
     func onReceiveJoinRoomResult(success: Bool, room: WhiteRoom?, error: Error?) -> Void {
         if (success) {
             self.room = room
+            self.sceneViewController?.room = room
+            
             room?.getMemberState(result: { (state: WhiteMemberState) in
                 self.activeMemberState = state
                 self.setUpToolBox()
             })
             room?.getBroadcastState(result: { (state: WhiteBroadcastState) in
                 self.viewMode = state.viewMode
+            })
+            room?.getSceneState(result: { (state) in
+                self.sceneViewController?.updateSceneState(sceneState: state)
             })
         }
     }
@@ -165,12 +187,12 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
     
     @objc func clickReplay() -> Void {
         self.goBackAndLeaveRoom()
-        self.delegate?.fireReplay(uuid: self.uuid, roomToken: self.roomToken)
+        self.delegate?.fireReplay(uuid: self.uuid!, roomToken: self.roomToken)
     }
     
     @objc func goShareView() -> Void {
         let viewController =  InviteViewController()
-        viewController.setSharedURL("https://demo.herewhite.com/#/zh-CN/whiteboard/" + self.uuid + "/")
+        viewController.setSharedURL("https://demo.herewhite.com/#/zh-CN/whiteboard/" + self.uuid! + "/")
         let nav = UINavigationController(rootViewController: viewController)
         self.navigationController?.present(nav, animated: true, completion: nil);
     }
@@ -272,14 +294,50 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         })
     }
     
+    func setupSceneOperationButtons() -> Void {
+        let previousButton = UIButton(type: .custom)
+        let nextButton = UIButton(type: .custom)
+        
+        self.view.addSubview(previousButton)
+        self.view.addSubview(nextButton)
+        
+        previousButton.setImage(UIImage(named: "up")!.maskWithColor(color: .white), for: .normal)
+        previousButton.layer.backgroundColor = Theme.mainColor.cgColor
+        previousButton.layer.cornerRadius = 18
+        
+        nextButton.setImage(UIImage(named: "down")!.maskWithColor(color: .white), for: .normal)
+        nextButton.layer.backgroundColor = Theme.mainColor.cgColor
+        nextButton.layer.cornerRadius = 18
+        
+        previousButton.snp.makeConstraints({(make) -> Void in
+            make.size.equalTo(CGSize(width: 36, height: 36))
+            make.bottomMargin.equalTo(-116)
+            make.rightMargin.equalTo(-4)
+        })
+        nextButton.snp.makeConstraints({(make) -> Void in
+            make.size.equalTo(CGSize(width: 36, height: 36))
+            make.bottomMargin.equalTo(-72)
+            make.rightMargin.equalTo(-4)
+        })
+        previousButton.addTarget(self, action: #selector(clickPreviousButton), for: .touchUpInside)
+        nextButton.addTarget(self, action: #selector(clickNextButton), for: .touchUpInside)
+    }
+    
     @objc func goSenceView() -> Void {
-        let nav = UINavigationController(rootViewController: SenceViewController())
+        let nav = UINavigationController(rootViewController: self.sceneViewController!)
         self.navigationController?.present(nav, animated: true, completion: nil);
+    }
+    
+    @objc func clickPreviousButton() -> Void {
+        self.room?.pptPreviousStep()
+    }
+    
+    @objc func clickNextButton() -> Void {
+        self.room?.pptNextStep()
     }
    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         self.navigationController?.setNavigationBarHidden(true, animated: true)
     }
-    
 }

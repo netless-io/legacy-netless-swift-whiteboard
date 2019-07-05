@@ -9,7 +9,7 @@
 import UIKit
 import SnapKit
 
-class ViewController: UIViewController, WhiteboardViewControllerDelegate {
+class ViewController: UIViewController, WhiteboardViewControllerDelegate, QRScannerViewControllerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,10 +53,12 @@ class ViewController: UIViewController, WhiteboardViewControllerDelegate {
             make.centerX.equalTo(superview)
         }
     }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         self.navigationController?.setNavigationBarHidden(true, animated: true)
     }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
         self.navigationController?.setNavigationBarHidden(false, animated: true)
@@ -80,13 +82,22 @@ class ViewController: UIViewController, WhiteboardViewControllerDelegate {
     }
     
     @objc func scanQRCode() -> Void {
-        self.navigationController?.pushViewController(QRScannerViewController(), animated: true)
+        let viewController = QRScannerViewController()
+        viewController.delegate = self
+        self.navigationController?.pushViewController(viewController, animated: true)
     }
     
     func fireReplay(uuid: String, roomToken: String) -> Void {
         let viewController = ReplayViewController()
         viewController.uuid = uuid
         viewController.roomToken = roomToken
+        self.navigationController?.pushViewController(viewController, animated: true)
+    }
+    
+    func fireJoinRoom(uuid: String) {
+        let viewController = WhiteboardViewController()
+        viewController.delegate = self
+        viewController.uuid = uuid
         self.navigationController?.pushViewController(viewController, animated: true)
     }
 }

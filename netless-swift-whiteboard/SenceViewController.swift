@@ -5,41 +5,80 @@
 //  Created by 伍双 on 2019/6/15.
 //  Copyright © 2019 伍双. All rights reserved.
 //
-
 import UIKit
 
 class SenceViewController: UIViewController {
-    var tableView = UITableView()
-    var dataArr = NSMutableArray()
+    
+    public var room: WhiteRoom?
+    
+    private var tableView = UITableView()
+
+    private var scenes: Array<WhiteScene> = []
+    private var scenePreviews: Array<UIImage?> = []
+    private var sceneIndex: Int = 0
+    private var sceneDirectory: String = ""
+    
+    public func updateSceneState(sceneState: WhiteSceneState) -> Void {
+        let originSelectedIndex = self.tableView.indexPathForSelectedRow?.row
+        
+        self.scenes = sceneState.scenes
+        self.sceneIndex = sceneState.index
+        
+        if originSelectedIndex == nil || self.sceneIndex != originSelectedIndex {
+            self.tableView.selectRow(
+                at: IndexPath(row: self.sceneIndex, section: 0),
+                animated: false,
+                scrollPosition: UITableView.ScrollPosition.middle
+            )
+        }
+        let cells = sceneState.scenePath.split(separator: "/")
+        
+        if cells.count > 1 {
+            let dirCells = cells[0...(cells.count - 2)]
+            self.sceneDirectory = "/" + dirCells.joined(separator: "/")
+        } else {
+            self.sceneDirectory = "/"
+        }
+        self.loadAllPreviews()
+        self.tableView.reloadData()
+    }
+    
+    private func loadAllPreviews() {
+        self.scenePreviews = Array(repeating: nil, count: self.scenes.count)
+        
+        for i in 0...(self.scenes.count - 1) {
+            let scenePath = self.scenePath(index: i)
+            self.room?.getScenePreviewImage(scenePath, completion: {(image) in
+                self.scenePreviews[i] = image
+                self.tableView.reloadRows(at: [IndexPath(row: i, section: 0)], with: .none)
+            })
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "全部页面"
-        let superview = self.view!
         let nav = self.navigationController?.navigationBar
+        
         nav?.barStyle = UIBarStyle.black
         nav?.barTintColor = Theme.mainColor
         nav?.tintColor = UIColor.white
-        superview.backgroundColor = Theme.bgGray
-        dataArr = ["1","2","3","4","5","6","7","8","9","10"]
-        setUpSence(superview: superview)
-        setUpLeftBtn(superview: superview)
+        self.view.backgroundColor = Theme.bgGray
         
-        // 1.创建tableView,并添加的控制器的view
+        setUpSence()
+        setupButtons()
+        
         tableView = UITableView(frame: view.bounds)
-        
-        // 2.设置数据源代理
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
-        // 3.添加到控制器的view
         self.view.addSubview(tableView)
-        
     }
     
-    func setUpLeftBtn(superview: UIView) -> Void {
-        let leftBtn = UIBarButtonItem(title: "加一页", style: .plain, target: self, action: nil)
-        let rightBtn = UIBarButtonItem(title: "完成", style: .plain, target: self, action: #selector(goToWhiteboard))
+    func setupButtons() -> Void {
+        let leftBtn = UIBarButtonItem(title: "返回", style: .plain, target: self, action: #selector(goToWhiteboard))
+        let rightBtn = UIBarButtonItem(title: "加一页", style: .plain, target: self, action: #selector(addSence))
+        
         self.navigationItem.leftBarButtonItem = leftBtn
         self.navigationItem.rightBarButtonItem = rightBtn
     }
@@ -49,55 +88,72 @@ class SenceViewController: UIViewController {
     }
     
     @objc func addSence() -> Void {
-        
+        self.room?.putScenes(self.sceneDirectory, scenes: [WhiteScene()], index: UInt(self.sceneIndex + 1))
     }
     
-    func setUpSence(superview: UIView) -> Void {
+    func setUpSence() -> Void {
         let sence = UIView();
         sence.backgroundColor = UIColor.red
-        superview.addSubview(sence)
+        self.view.addSubview(sence)
         sence.snp.makeConstraints { (make) -> Void in
             make.size.equalTo(CGSize(width: 240, height: 160))
             make.centerYWithinMargins.equalTo(120)
-            make.centerX.equalTo(superview)
+            make.centerX.equalTo(self.view)
         }
     }
 }
 
 extension SenceViewController: UITableViewDataSource, UITableViewDelegate {
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellID = "cell";
-        let cell = UITableViewCell(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: cellID)
-        cell.textLabel?.text = String(dataArr[indexPath.row] as! String)
+        let scenePath = self.scenePath(index: indexPath.row)
+        let cell = UITableViewCell(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: scenePath)
+        cell.textLabel?.text = String(String(indexPath.row + 1))
         cell.backgroundColor = Theme.bgGray
-        setUpCellInner(cell: cell)
+        self.setupCellInner(cell: cell, index: indexPath.row, isHighligh: indexPath.row == self.sceneIndex)
         return cell
     }
     
-    func setUpCellInner(cell: UITableViewCell) -> Void {
-        let scene = UIView()
-        scene.backgroundColor = UIColor.white
-        cell.addSubview(scene)
-        scene.snp.makeConstraints { (make) -> Void in
-            make.size.equalTo(CGSize(width: 192, height: 108))
-            make.center.equalTo(cell)
+    func setupCellInner(cell: UITableViewCell, index: Int, isHighligh: Bool) -> Void {
+        let subviewTag = 100
+        var sceneImage: UIImageView? = cell.viewWithTag(subviewTag) as? UIImageView
+        
+        if sceneImage == nil {
+            sceneImage = UIImageView()
+            cell.addSubview(sceneImage!)
+            sceneImage!.backgroundColor = UIColor.white
+            sceneImage!.contentMode = .scaleAspectFit
+            sceneImage!.tag = subviewTag
+            sceneImage!.snp.makeConstraints { (make) -> Void in
+                make.size.equalTo(CGSize(width: 192, height: 108))
+                make.center.equalTo(cell)
+            }
         }
+        sceneImage!.image = self.scenePreviews[index]
+        cell.backgroundColor = isHighligh ? Theme.mainGrayLight : Theme.bgGray
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dataArr.count;
+        return self.scenes.count;
     }
-    
-    
     
     //cell高度
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat{
         return 160
     }
 
-
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("点击了\(indexPath.row)")
+        self.room?.setScenePath(self.scenePath(index: indexPath.row))
     }
     
+    func scenePath(index: Int) -> String {
+        let pattern = #"/$"#
+        let sceneName = self.scenes[index].name
+        
+        if self.sceneDirectory.range(of: pattern, options: .regularExpression) != nil {
+            return self.sceneDirectory + sceneName
+        } else {
+            return self.sceneDirectory + "/" + sceneName
+        }
+    }
 }
