@@ -44,7 +44,7 @@ class QRScannerViewController: UIViewController, QRScannerViewDelegate {
     }
     
     func qrScanningSucceededWithCode(_ str: String?) {
-        let pattern = #"https://demo\.herewhite\.com/#/(\w|-)+/whiteboard/[a-z0-9]+/?"#
+        let pattern = #"https://demo(-agora-partner)?\.herewhite\.com/#/(\w|-)+/whiteboard/[a-z0-9]+/?"#
         
         if str != nil && str!.range(of: pattern, options: .regularExpression) != nil {
             var cells = str!.split(separator: "/")
