@@ -37,4 +37,17 @@ class ApiMiddleWare {
             }
         }
     }
+    
+    static func joinRoom(uuid: String, callback: @escaping (_ roomToken: String) -> Void) -> Void {
+        let url = "\(baseUrl)/room/join?uuid=\(uuid)&token=\(token)"
+        let request = AF.request(url, method: .post, parameters:nil , headers: headers)
+        
+        request.responseJSON { response in
+            if let result = response.value {
+                let json = JSON(result)
+                let roomToken = json["msg"]["roomToken"].string!
+                callback(roomToken)
+            }
+        }
+    }
 }

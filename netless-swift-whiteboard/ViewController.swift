@@ -83,6 +83,7 @@ class ViewController: UIViewController, WhiteboardViewControllerDelegate, QRScan
     
     @objc func scanQRCode() -> Void {
         let viewController = QRScannerViewController()
+        viewController.delegate = self
         self.navigationController?.pushViewController(viewController, animated: true)
     }
     
@@ -94,7 +95,10 @@ class ViewController: UIViewController, WhiteboardViewControllerDelegate, QRScan
     }
     
     func fireJoinRoom(uuid: String) {
-        
+        let viewController = WhiteboardViewController()
+        viewController.delegate = self
+        viewController.uuid = uuid
+        self.navigationController?.pushViewController(viewController, animated: true)
     }
 }
 

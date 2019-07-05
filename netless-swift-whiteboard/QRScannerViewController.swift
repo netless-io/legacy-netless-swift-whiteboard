@@ -44,11 +44,27 @@ class QRScannerViewController: UIViewController, QRScannerViewDelegate {
     }
     
     func qrScanningSucceededWithCode(_ str: String?) {
-        if str != nil {
-            print("qrcode:", str!)
-            self.navigationController?.popViewController(animated: true);
+        let pattern = #"https://demo\.herewhite\.com/#/(\w|-)+/whiteboard/[a-z0-9]+/?"#
+        
+        if str != nil && str!.range(of: pattern, options: .regularExpression) != nil {
+            var cells = str!.split(separator: "/")
+            var uuid: String?
+            
+            while let lastCell = cells.popLast() {
+                if lastCell.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+                    uuid = String(lastCell)
+                    break
+                }
+            }
+            if uuid == nil {
+                self.alertAndExit(text: "无法识别的 URL")
+                
+            } else {
+                self.navigationController?.popViewController(animated: true);
+                self.delegate?.fireJoinRoom(uuid: uuid!)
+            }
         } else {
-            self.alertAndExit(text: "扫描失败")
+            self.alertAndExit(text: "无法识别的二维码格式")
         }
     }
 }

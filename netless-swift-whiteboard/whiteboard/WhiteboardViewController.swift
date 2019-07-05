@@ -43,6 +43,8 @@ protocol WhiteboardViewControllerDelegate: NSObject {
 class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
     
     public weak var delegate: WhiteboardViewControllerDelegate?
+    public var uuid: String?
+    private var roomToken: String = ""
     
     var toolArray = ["selector", "pencil", "text", "upload", "eraser", "ellipse", "rectangle"]
     var toolDic: Dictionary<ToolType, Tools> = [
@@ -53,9 +55,6 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         ToolType.ellipse: Tools.init(index: 5, iconView: UIImage(named: ToolType.ellipse.rawValue)!, hasColor: true, hasStroke: true, isActive: false),
         ToolType.rectangle: Tools.init(index: 6, iconView: UIImage(named: ToolType.rectangle.rawValue)!, hasColor: true, hasStroke: true, isActive: false),
     ]
-    
-    private var uuid: String = ""
-    private var roomToken: String = ""
     
     var sdk: WhiteSDK?
     var boardView: WhiteBoardView?
@@ -83,7 +82,12 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         setUpUploadBtn(superview: superview)
         setUpMenuBtn(superview: superview)
         setupSceneOperationButtons()
-        ApiMiddleWare.createRoom(name: "test", limit: 100, room: RoomType.historied, callBack: onRoomCreated)
+        
+        if self.uuid != nil {
+            ApiMiddleWare.joinRoom(uuid: self.uuid!, callback: onRoomJoined)
+        } else {
+            ApiMiddleWare.createRoom(name: "test", limit: 100, room: RoomType.historied, callBack: onRoomCreated)
+        }
     }
     
     @objc func fireRoomStateChanged(_ state: WhiteRoomState) -> Void {
@@ -113,6 +117,12 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
     func onRoomCreated(uuid: String, roomToken: String) -> Void {
         let roomConfig = WhiteRoomConfig(uuid: uuid, roomToken: roomToken)
         self.uuid = uuid
+        self.roomToken = roomToken
+        self.sdk!.joinRoom(with: roomConfig, callbacks: self, completionHandler:onReceiveJoinRoomResult)
+    }
+    
+    func onRoomJoined(roomToken: String) -> Void {
+        let roomConfig = WhiteRoomConfig(uuid: self.uuid!, roomToken: roomToken)
         self.roomToken = roomToken
         self.sdk!.joinRoom(with: roomConfig, callbacks: self, completionHandler:onReceiveJoinRoomResult)
     }
@@ -177,12 +187,12 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
     
     @objc func clickReplay() -> Void {
         self.goBackAndLeaveRoom()
-        self.delegate?.fireReplay(uuid: self.uuid, roomToken: self.roomToken)
+        self.delegate?.fireReplay(uuid: self.uuid!, roomToken: self.roomToken)
     }
     
     @objc func goShareView() -> Void {
         let viewController =  InviteViewController()
-        viewController.setSharedURL("https://demo.herewhite.com/#/zh-CN/whiteboard/" + self.uuid + "/")
+        viewController.setSharedURL("https://demo.herewhite.com/#/zh-CN/whiteboard/" + self.uuid! + "/")
         let nav = UINavigationController(rootViewController: viewController)
         self.navigationController?.present(nav, animated: true, completion: nil);
     }
