@@ -14,6 +14,7 @@ class SenceViewController: UIViewController {
     private var tableView = UITableView()
 
     private var scenes: Array<WhiteScene> = []
+    private var scenePreviews: Array<UIImage?> = []
     private var sceneIndex: Int = 0
     private var sceneDirectory: String = ""
     
@@ -22,7 +23,6 @@ class SenceViewController: UIViewController {
         
         self.scenes = sceneState.scenes
         self.sceneIndex = sceneState.index
-        self.tableView.reloadData()
         
         if originSelectedIndex == nil || self.sceneIndex != originSelectedIndex {
             self.tableView.selectRow(
@@ -38,6 +38,20 @@ class SenceViewController: UIViewController {
             self.sceneDirectory = "/" + dirCells.joined(separator: "/")
         } else {
             self.sceneDirectory = "/"
+        }
+        self.loadAllPreviews()
+        self.tableView.reloadData()
+    }
+    
+    private func loadAllPreviews() {
+        self.scenePreviews = Array(repeating: nil, count: self.scenes.count)
+        
+        for i in 0...(self.scenes.count - 1) {
+            let scenePath = self.scenePath(index: i)
+            self.room?.getScenePreviewImage(scenePath, completion: {(image) in
+                self.scenePreviews[i] = image
+                self.tableView.reloadRows(at: [IndexPath(row: i, section: 0)], with: .none)
+            })
         }
     }
     
@@ -92,25 +106,31 @@ class SenceViewController: UIViewController {
 extension SenceViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellID = "cell_" + String(indexPath.row);
-        let cell = UITableViewCell(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: cellID)
+        let scenePath = self.scenePath(index: indexPath.row)
+        let cell = UITableViewCell(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: scenePath)
         cell.textLabel?.text = String(String(indexPath.row + 1))
         cell.backgroundColor = Theme.bgGray
-        setupCellInner(cell: cell, isHighligh: indexPath.row == self.sceneIndex)
+        self.setupCellInner(cell: cell, index: indexPath.row, isHighligh: indexPath.row == self.sceneIndex)
         return cell
     }
     
-    func setupCellInner(cell: UITableViewCell, isHighligh: Bool) -> Void {
-        let scene = UIView()
-        scene.backgroundColor = UIColor.white
+    func setupCellInner(cell: UITableViewCell, index: Int, isHighligh: Bool) -> Void {
+        let subviewTag = 100
+        var sceneImage: UIImageView? = cell.viewWithTag(subviewTag) as? UIImageView
         
-        cell.addSubview(scene)
-        cell.backgroundColor = isHighligh ? Theme.mainGrayLight : Theme.bgGray
-        
-        scene.snp.makeConstraints { (make) -> Void in
-            make.size.equalTo(CGSize(width: 192, height: 108))
-            make.center.equalTo(cell)
+        if sceneImage == nil {
+            sceneImage = UIImageView()
+            cell.addSubview(sceneImage!)
+            sceneImage!.backgroundColor = UIColor.white
+            sceneImage!.contentMode = .scaleAspectFit
+            sceneImage!.tag = subviewTag
+            sceneImage!.snp.makeConstraints { (make) -> Void in
+                make.size.equalTo(CGSize(width: 192, height: 108))
+                make.center.equalTo(cell)
+            }
         }
+        sceneImage!.image = self.scenePreviews[index]
+        cell.backgroundColor = isHighligh ? Theme.mainGrayLight : Theme.bgGray
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -123,9 +143,17 @@ extension SenceViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let sceneName = self.scenes[indexPath.row].name
-        let scenePath = self.sceneDirectory + "/" + sceneName
+        self.room?.setScenePath(self.scenePath(index: indexPath.row))
+    }
+    
+    func scenePath(index: Int) -> String {
+        let pattern = #"/$"#
+        let sceneName = self.scenes[index].name
         
-        self.room?.setScenePath(scenePath)
+        if self.sceneDirectory.range(of: pattern, options: .regularExpression) != nil {
+            return self.sceneDirectory + sceneName
+        } else {
+            return self.sceneDirectory + "/" + sceneName
+        }
     }
 }
