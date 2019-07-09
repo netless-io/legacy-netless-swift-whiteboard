@@ -22,10 +22,17 @@ class SenceViewController: UIViewController {
     
     public func updateSceneState(sceneState: WhiteSceneState) -> Void {
         let originSelectedIndex = self.tableView.indexPathForSelectedRow?.row
+        let cells = sceneState.scenePath.split(separator: "/")
         
         self.scenes = sceneState.scenes
         self.sceneIndex = sceneState.index
         
+        if cells.count > 1 {
+            let dirCells = cells[0...(cells.count - 2)]
+            self.sceneDirectory = "/" + dirCells.joined(separator: "/")
+        } else {
+            self.sceneDirectory = "/"
+        }
         if (self.isVisible) {
             self.refreshPreviews(originSelectedIndex: originSelectedIndex)
         } else {
