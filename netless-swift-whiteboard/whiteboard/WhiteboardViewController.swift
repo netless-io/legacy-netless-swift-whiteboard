@@ -7,8 +7,6 @@
 //
 import UIKit
 import FileBrowser
-
-//import ImagePicker
 import Pickle
 
 class Tools{
@@ -45,6 +43,7 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
     public weak var delegate: WhiteboardViewControllerDelegate?
     public var uuid: String?
     private var roomToken: String = ""
+    private var spinnerView: UIView?
     
     var toolArray = ["selector", "pencil", "text", "upload", "eraser", "ellipse", "rectangle"]
     var toolDic: Dictionary<ToolType, Tools> = [
@@ -90,6 +89,7 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         } else {
             ApiMiddleWare.createRoom(name: "test", limit: 100, room: RoomType.historied, callBack: onRoomCreated)
         }
+        self.showSpinner()
     }
     
     @objc func fireRoomStateChanged(_ state: WhiteRoomState) -> Void {
@@ -134,6 +134,7 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
             self.room = room
             self.sceneViewController?.room = room
             self.pptPreviewViewController?.room = room
+            self.removeSpinner()
             
             room?.getMemberState(result: { (state: WhiteMemberState) in
                 self.activeMemberState = state
@@ -318,5 +319,19 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         self.navigationController?.setNavigationBarHidden(true, animated: true)
+    }
+    
+    private func showSpinner() {
+        self.spinnerView = UIView(frame: self.view.bounds)
+        self.spinnerView!.backgroundColor = UIColor.init(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.5)
+        let ai = UIActivityIndicatorView.init(style: .whiteLarge)
+        ai.startAnimating()
+        ai.center = self.spinnerView!.center
+        self.spinnerView!.addSubview(ai)
+        self.view.addSubview(self.spinnerView!)
+    }
+    
+    private func removeSpinner() {
+        self.spinnerView?.removeFromSuperview()
     }
 }
