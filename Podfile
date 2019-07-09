@@ -3,7 +3,7 @@ use_frameworks!
 
 target 'netless-swift-whiteboard' do
     pod 'SnapKit', '~> 5.0.0'
-    pod 'White-SDK-iOS', '~> 2.3.1'
+    pod 'White-SDK-iOS', '~> 2.3.2'
     pod 'Alamofire', '~> 5.0.0-beta.5'
     pod 'SwiftyJSON', '~> 4.0'
     pod 'AliyunOSSiOS'
