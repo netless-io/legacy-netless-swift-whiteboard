@@ -17,6 +17,8 @@ class SenceViewController: UIViewController {
     private var scenePreviews: Array<UIImage?> = []
     private var sceneIndex: Int = 0
     private var sceneDirectory: String = ""
+    private var isVisible: Bool = false
+    private var didRejectUpdate: Bool = false
     
     public func updateSceneState(sceneState: WhiteSceneState) -> Void {
         let originSelectedIndex = self.tableView.indexPathForSelectedRow?.row
@@ -24,34 +26,45 @@ class SenceViewController: UIViewController {
         self.scenes = sceneState.scenes
         self.sceneIndex = sceneState.index
         
-        if originSelectedIndex == nil || self.sceneIndex != originSelectedIndex {
-            self.tableView.selectRow(
-                at: IndexPath(row: self.sceneIndex, section: 0),
-                animated: false,
-                scrollPosition: UITableView.ScrollPosition.middle
-            )
-        }
-        let cells = sceneState.scenePath.split(separator: "/")
-        
-        if cells.count > 1 {
-            let dirCells = cells[0...(cells.count - 2)]
-            self.sceneDirectory = "/" + dirCells.joined(separator: "/")
+        if (self.isVisible) {
+            self.refreshPreviews(originSelectedIndex: originSelectedIndex)
         } else {
-            self.sceneDirectory = "/"
+            self.didRejectUpdate = true
         }
-        self.loadAllPreviews()
-        self.tableView.reloadData()
     }
     
-    private func loadAllPreviews() {
+    private func refreshPreviews(originSelectedIndex: Int?) {
+        if originSelectedIndex == nil || self.sceneIndex != originSelectedIndex {
+            if self.sceneIndex < self.tableView.numberOfRows(inSection: 0) {
+                self.tableView.selectRow(
+                    at: IndexPath(row: self.sceneIndex, section: 0),
+                    animated: false,
+                    scrollPosition: UITableView.ScrollPosition.middle
+                )
+            }
+        }
         self.scenePreviews = Array(repeating: nil, count: self.scenes.count)
-        
+
         for i in 0...(self.scenes.count - 1) {
             let scenePath = self.scenePath(index: i)
             self.room?.getScenePreviewImage(scenePath, completion: {(image) in
                 self.scenePreviews[i] = image
                 self.tableView.reloadRows(at: [IndexPath(row: i, section: 0)], with: .none)
             })
+        }
+        self.tableView.reloadData()
+    }
+    
+    public func setVisible(_ isVisible: Bool) {
+        if (self.isVisible != isVisible) {
+            self.isVisible = isVisible
+            if (isVisible) {
+                if (self.didRejectUpdate) {
+                    self.refreshPreviews(originSelectedIndex: nil)
+                }
+            } else {
+                self.didRejectUpdate = false
+            }
         }
     }
     
@@ -84,6 +97,7 @@ class SenceViewController: UIViewController {
     }
     
     @objc func goToWhiteboard() -> Void {
+        self.setVisible(false)
         self.dismiss(animated: true, completion: nil);
     }
     
