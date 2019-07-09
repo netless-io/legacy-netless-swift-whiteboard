@@ -145,6 +145,9 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
             room?.getSceneState(result: { (state) in
                 self.sceneViewController?.updateSceneState(sceneState: state)
             })
+            room?.moveCamera(toContainer: WhiteRectangleConfig(
+                originX: -480, originY: -270, width: 960, height: 540
+            ))
         }
     }
     

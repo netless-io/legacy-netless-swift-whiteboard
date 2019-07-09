@@ -62,7 +62,7 @@ let PPTDatas: Array<PPTData> = [
         "https://white-cn-doc-convert.oss-cn-hangzhou.aliyuncs.com/dynamicConvert/9614241b82d24097a6e926fbd1f8bf30/slide/slide11.xml",
         "https://white-cn-doc-convert.oss-cn-hangzhou.aliyuncs.com/dynamicConvert/9614241b82d24097a6e926fbd1f8bf30/slide/slide12.xml"
     ]),
-    PPTData(id: 3, preview: "img_ppt3", width: 2666, height: 1500,scenes: [
+    PPTData(id: 3, preview: "img_ppt3", width: 960, height: 540,scenes: [
         "https://netless-agora-whiteboard.oss-cn-hangzhou.aliyuncs.com/staticConvert/6c537d1380584f4b82a8b521336fcfbe/1.png",
         "https://netless-agora-whiteboard.oss-cn-hangzhou.aliyuncs.com/staticConvert/6c537d1380584f4b82a8b521336fcfbe/2.png",
         "https://netless-agora-whiteboard.oss-cn-hangzhou.aliyuncs.com/staticConvert/6c537d1380584f4b82a8b521336fcfbe/3.png",
@@ -105,7 +105,7 @@ let PPTDatas: Array<PPTData> = [
         "https://netless-agora-whiteboard.oss-cn-hangzhou.aliyuncs.com/staticConvert/6c537d1380584f4b82a8b521336fcfbe/40.png",
         "https://netless-agora-whiteboard.oss-cn-hangzhou.aliyuncs.com/staticConvert/6c537d1380584f4b82a8b521336fcfbe/41.png"
     ]),
-    PPTData(id: 4, preview: "img_ppt4", width: 2666, height: 1500,scenes: [
+    PPTData(id: 4, preview: "img_ppt4", width: 960, height: 540,scenes: [
         "https://netless-agora-whiteboard.oss-cn-hangzhou.aliyuncs.com/staticConvert/dbd36235042547f8888e9d82594c1b27/1.png",
         "https://netless-agora-whiteboard.oss-cn-hangzhou.aliyuncs.com/staticConvert/dbd36235042547f8888e9d82594c1b27/2.png",
         "https://netless-agora-whiteboard.oss-cn-hangzhou.aliyuncs.com/staticConvert/dbd36235042547f8888e9d82594c1b27/3.png",
@@ -145,7 +145,7 @@ let PPTDatas: Array<PPTData> = [
         "https://netless-agora-whiteboard.oss-cn-hangzhou.aliyuncs.com/staticConvert/dbd36235042547f8888e9d82594c1b27/37.png",
         "https://netless-agora-whiteboard.oss-cn-hangzhou.aliyuncs.com/staticConvert/dbd36235042547f8888e9d82594c1b27/38.png"
     ]),
-    PPTData(id: 5, preview: "img_ppt5", width: 2666, height: 1500,scenes: [
+    PPTData(id: 5, preview: "img_ppt5", width: 960, height: 540,scenes: [
         "https://netless-agora-whiteboard.oss-cn-hangzhou.aliyuncs.com/staticConvert/79b8340e6e814d919f47293376102013/1.png",
         "https://netless-agora-whiteboard.oss-cn-hangzhou.aliyuncs.com/staticConvert/79b8340e6e814d919f47293376102013/2.png",
         "https://netless-agora-whiteboard.oss-cn-hangzhou.aliyuncs.com/staticConvert/79b8340e6e814d919f47293376102013/3.png",
