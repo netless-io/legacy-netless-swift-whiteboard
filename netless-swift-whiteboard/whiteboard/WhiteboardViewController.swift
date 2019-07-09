@@ -193,8 +193,12 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
     }
     
     @objc func clickReplay() -> Void {
-        self.goBackAndLeaveRoom()
         self.delegate?.fireReplay(uuid: self.uuid!, roomToken: self.roomToken)
+        var viewControllers = self.navigationController?.viewControllers
+        let index = viewControllers!.firstIndex(of: self)!
+        viewControllers!.remove(at: index)
+        self.navigationController?.viewControllers = viewControllers!
+        self.room?.disconnect({})
     }
     
     @objc func goShareView() -> Void {
