@@ -13,6 +13,7 @@ extension WhiteboardViewController {
         toolBox.layer.cornerRadius = 4
         toolBox.layer.borderWidth = 1
         toolBox.layer.borderColor = Theme.mainGrayLight.cgColor
+        toolBox.backgroundColor = UIColor.white
         toolBox.clipsToBounds = true
         self.view.addSubview(toolBox)
         toolBox.snp.makeConstraints({(make) -> Void in
