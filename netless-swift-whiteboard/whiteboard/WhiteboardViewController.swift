@@ -324,6 +324,7 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
     }
     
     @objc func goSenceView() -> Void {
+        self.sceneViewController!.setVisible(true)
         let nav = UINavigationController(rootViewController: self.sceneViewController!)
         self.navigationController?.present(nav, animated: true, completion: nil);
     }
