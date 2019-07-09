@@ -59,6 +59,7 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
     var sdk: WhiteSDK?
     var boardView: WhiteBoardView?
     var sceneViewController: SenceViewController?
+    var pptPreviewViewController: PPTPreviewViewController?
     var room: WhiteRoom?
     var btnArray: [ToolboxButton] = []
     
@@ -72,6 +73,7 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         self.title = "互动白板"
         self.view.backgroundColor = UIColor.white
         self.sceneViewController = SenceViewController()
+        self.pptPreviewViewController = PPTPreviewViewController()
         
         let superview = self.view!
         setUpWhiteboardView()
@@ -131,6 +133,7 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         if (success) {
             self.room = room
             self.sceneViewController?.room = room
+            self.pptPreviewViewController?.room = room
             
             room?.getMemberState(result: { (state: WhiteMemberState) in
                 self.activeMemberState = state
@@ -230,7 +233,7 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         let uploadBtn = ButtonPrimary(type: UIButton.ButtonType.custom)
         let toolIcon = UIImage(named: "upload")
         uploadBtn.setImage(toolIcon, for: .normal)
-        uploadBtn.addTarget(self, action: #selector(alertFileView), for: .touchUpInside)
+        uploadBtn.addTarget(self, action: #selector(clickUploadButton), for: .touchUpInside)
         superview.addSubview(uploadBtn)
         uploadBtn.snp.makeConstraints({(make) -> Void in
             make.size.equalTo(CGSize(width: 36, height: 36))
@@ -239,37 +242,9 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         })
     }
     
-    @objc func alertFileView() -> Void {
-        let controller = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let names = ["图片", "浏览"]
-        for name in names {
-            let action = UIAlertAction(title: name, style: .default) { (action) in
-                if (action.title == "图片") {
-                    let picker = ImagePickerController()
-                    picker.delegate = self as? ImagePickerControllerDelegate
-                    self.present(picker, animated: true, completion: nil)
-                } else {
-                    let baseUrl = self.getiCloudDocumentURL()
-                    let manager = FileManager.default
-                    
-                    let urlForDocument = manager.urls(for: .documentDirectory, in:.userDomainMask)
-                    
-                    let url = urlForDocument[0] as URL
-                    
-                    if (baseUrl == nil) {
-                        let fileBrowser = FileBrowser(initialPath: url, allowEditing: true)
-                        self.present(fileBrowser, animated: true, completion: nil)
-                    } else {
-                        let fileBrowser = FileBrowser(initialPath: baseUrl, allowEditing: true)
-                        self.present(fileBrowser, animated: true, completion: nil)
-                    }
-                }
-            }
-            controller.addAction(action)
-        }
-        let cancelAction = UIAlertAction(title: "取消", style: .cancel, handler: nil)
-        controller.addAction(cancelAction)
-        present(controller, animated: true, completion: nil)
+    @objc func clickUploadButton() -> Void {
+        let nav = UINavigationController(rootViewController: self.pptPreviewViewController!)
+        self.navigationController?.present(nav, animated: true, completion: nil);
     }
     
     func getiCloudDocumentURL() -> URL? {
