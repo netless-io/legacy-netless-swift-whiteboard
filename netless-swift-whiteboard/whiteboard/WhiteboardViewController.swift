@@ -7,8 +7,6 @@
 //
 import UIKit
 import FileBrowser
-
-//import ImagePicker
 import Pickle
 
 class Tools{
@@ -45,6 +43,7 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
     public weak var delegate: WhiteboardViewControllerDelegate?
     public var uuid: String?
     private var roomToken: String = ""
+    private var spinnerView: UIView?
     
     var toolArray = ["selector", "pencil", "text", "upload", "eraser", "ellipse", "rectangle"]
     var toolDic: Dictionary<ToolType, Tools> = [
@@ -59,6 +58,7 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
     var sdk: WhiteSDK?
     var boardView: WhiteBoardView?
     var sceneViewController: SenceViewController?
+    var pptPreviewViewController: PPTPreviewViewController?
     var room: WhiteRoom?
     var btnArray: [ToolboxButton] = []
     
@@ -72,6 +72,7 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         self.title = "互动白板"
         self.view.backgroundColor = UIColor.white
         self.sceneViewController = SenceViewController()
+        self.pptPreviewViewController = PPTPreviewViewController()
         
         let superview = self.view!
         setUpWhiteboardView()
@@ -88,6 +89,7 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         } else {
             ApiMiddleWare.createRoom(name: "test", limit: 100, room: RoomType.historied, callBack: onRoomCreated)
         }
+        self.showSpinner()
     }
     
     @objc func fireRoomStateChanged(_ state: WhiteRoomState) -> Void {
@@ -131,6 +133,8 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         if (success) {
             self.room = room
             self.sceneViewController?.room = room
+            self.pptPreviewViewController?.room = room
+            self.removeSpinner()
             
             room?.getMemberState(result: { (state: WhiteMemberState) in
                 self.activeMemberState = state
@@ -142,6 +146,9 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
             room?.getSceneState(result: { (state) in
                 self.sceneViewController?.updateSceneState(sceneState: state)
             })
+            room?.moveCamera(toContainer: WhiteRectangleConfig(
+                originX: -480, originY: -270, width: 960, height: 540
+            ))
         }
     }
     
@@ -186,8 +193,12 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
     }
     
     @objc func clickReplay() -> Void {
-        self.goBackAndLeaveRoom()
         self.delegate?.fireReplay(uuid: self.uuid!, roomToken: self.roomToken)
+        var viewControllers = self.navigationController?.viewControllers
+        let index = viewControllers!.firstIndex(of: self)!
+        viewControllers!.remove(at: index)
+        self.navigationController?.viewControllers = viewControllers!
+        self.room?.disconnect({})
     }
     
     @objc func goShareView() -> Void {
@@ -230,7 +241,7 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         let uploadBtn = ButtonPrimary(type: UIButton.ButtonType.custom)
         let toolIcon = UIImage(named: "upload")
         uploadBtn.setImage(toolIcon, for: .normal)
-        uploadBtn.addTarget(self, action: #selector(alertFileView), for: .touchUpInside)
+        uploadBtn.addTarget(self, action: #selector(clickUploadButton), for: .touchUpInside)
         superview.addSubview(uploadBtn)
         uploadBtn.snp.makeConstraints({(make) -> Void in
             make.size.equalTo(CGSize(width: 36, height: 36))
@@ -239,37 +250,9 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
         })
     }
     
-    @objc func alertFileView() -> Void {
-        let controller = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let names = ["图片", "浏览"]
-        for name in names {
-            let action = UIAlertAction(title: name, style: .default) { (action) in
-                if (action.title == "图片") {
-                    let picker = ImagePickerController()
-                    picker.delegate = self as? ImagePickerControllerDelegate
-                    self.present(picker, animated: true, completion: nil)
-                } else {
-                    let baseUrl = self.getiCloudDocumentURL()
-                    let manager = FileManager.default
-                    
-                    let urlForDocument = manager.urls(for: .documentDirectory, in:.userDomainMask)
-                    
-                    let url = urlForDocument[0] as URL
-                    
-                    if (baseUrl == nil) {
-                        let fileBrowser = FileBrowser(initialPath: url, allowEditing: true)
-                        self.present(fileBrowser, animated: true, completion: nil)
-                    } else {
-                        let fileBrowser = FileBrowser(initialPath: baseUrl, allowEditing: true)
-                        self.present(fileBrowser, animated: true, completion: nil)
-                    }
-                }
-            }
-            controller.addAction(action)
-        }
-        let cancelAction = UIAlertAction(title: "取消", style: .cancel, handler: nil)
-        controller.addAction(cancelAction)
-        present(controller, animated: true, completion: nil)
+    @objc func clickUploadButton() -> Void {
+        let nav = UINavigationController(rootViewController: self.pptPreviewViewController!)
+        self.navigationController?.present(nav, animated: true, completion: nil);
     }
     
     func getiCloudDocumentURL() -> URL? {
@@ -340,5 +323,19 @@ class WhiteboardViewController: UIViewController, WhiteRoomCallbackDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         self.navigationController?.setNavigationBarHidden(true, animated: true)
+    }
+    
+    private func showSpinner() {
+        self.spinnerView = UIView(frame: self.view.bounds)
+        self.spinnerView!.backgroundColor = UIColor.init(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.5)
+        let ai = UIActivityIndicatorView.init(style: .whiteLarge)
+        ai.startAnimating()
+        ai.center = self.spinnerView!.center
+        self.spinnerView!.addSubview(ai)
+        self.view.addSubview(self.spinnerView!)
+    }
+    
+    private func removeSpinner() {
+        self.spinnerView?.removeFromSuperview()
     }
 }

@@ -29,6 +29,7 @@
 		6DDE2D8122BDE116008519FE /* QRCodeUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDE2D8022BDE116008519FE /* QRCodeUtil.swift */; };
 		BFEC3242A30C0722791CB64A /* Pods_netless_swift_whiteboard.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4767978068D8ADFD9133475B /* Pods_netless_swift_whiteboard.framework */; };
 		D24CA69E22CEF0B500C9B68C /* QRScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24CA69D22CEF0B500C9B68C /* QRScannerView.swift */; };
+		D267DD7322D47AEB00C1B889 /* PPTPreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D267DD7222D47AEB00C1B889 /* PPTPreviewViewController.swift */; };
 		D2D0110C22CAF656006B2B47 /* ReplayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D0110B22CAF656006B2B47 /* ReplayViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -81,6 +82,7 @@
 		914328CD952D25E75D8EA48F /* Pods-netless-swift-whiteboard.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-netless-swift-whiteboard.release.xcconfig"; path = "Target Support Files/Pods-netless-swift-whiteboard/Pods-netless-swift-whiteboard.release.xcconfig"; sourceTree = "<group>"; };
 		9CAB039CCD4D5D768080EF47 /* Pods-netless-swift-whiteboard.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-netless-swift-whiteboard.debug.xcconfig"; path = "Target Support Files/Pods-netless-swift-whiteboard/Pods-netless-swift-whiteboard.debug.xcconfig"; sourceTree = "<group>"; };
 		D24CA69D22CEF0B500C9B68C /* QRScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerView.swift; sourceTree = "<group>"; };
+		D267DD7222D47AEB00C1B889 /* PPTPreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PPTPreviewViewController.swift; sourceTree = "<group>"; };
 		D2D0110B22CAF656006B2B47 /* ReplayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplayViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -161,6 +163,7 @@
 				6DDE2D6522B9086B008519FE /* ApiMiddleWare.swift */,
 				6DDE2D7E22BDD413008519FE /* LoadingView.swift */,
 				6DA6EDCB22C9E69900613F82 /* Media.xcassets */,
+				D267DD7222D47AEB00C1B889 /* PPTPreviewViewController.swift */,
 			);
 			path = "netless-swift-whiteboard";
 			sourceTree = "<group>";
@@ -406,6 +409,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D267DD7322D47AEB00C1B889 /* PPTPreviewViewController.swift in Sources */,
 				6DDE2D5322B4D518008519FE /* InviteViewController.swift in Sources */,
 				D2D0110C22CAF656006B2B47 /* ReplayViewController.swift in Sources */,
 				6DDE2D5522B4D670008519FE /* SetViewController.swift in Sources */,

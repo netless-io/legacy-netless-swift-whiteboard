@@ -78,11 +78,12 @@ class SenceViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "全部页面"
-        let nav = self.navigationController?.navigationBar
         
-        nav?.barStyle = UIBarStyle.black
-        nav?.barTintColor = Theme.mainColor
-        nav?.tintColor = UIColor.white
+        if let nav = self.navigationController?.navigationBar {
+            nav.barStyle = UIBarStyle.black
+            nav.barTintColor = Theme.mainColor
+            nav.tintColor = UIColor.white
+        }
         self.view.backgroundColor = Theme.bgGray
         
         setUpSence()
