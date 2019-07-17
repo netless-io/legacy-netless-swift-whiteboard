@@ -2,12 +2,11 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "pencil~iphone.png",
+      "filename" : "img_ppt1.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "pencil~iphone@2x.png",
       "scale" : "2x"
     },
     {

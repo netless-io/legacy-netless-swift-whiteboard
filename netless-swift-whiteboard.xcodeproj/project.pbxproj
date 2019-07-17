@@ -69,7 +69,7 @@
 		6D0E1B2822B2481D00CD4B4F /* netless_swift_whiteboardUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = netless_swift_whiteboardUITests.swift; sourceTree = "<group>"; };
 		6D0E1B2A22B2481D00CD4B4F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6D0E1B3622B25A7700CD4B4F /* WhiteboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteboardViewController.swift; sourceTree = "<group>"; };
-		6DA6EDCB22C9E69900613F82 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
+		6DA6EDCB22C9E69900613F82 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Media.xcassets; path = "netless-swift-whiteboard/Media.xcassets"; sourceTree = SOURCE_ROOT; };
 		6DDE2D4E22B4A6DF008519FE /* SenceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenceViewController.swift; sourceTree = "<group>"; };
 		6DDE2D5222B4D518008519FE /* InviteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteViewController.swift; sourceTree = "<group>"; };
 		6DDE2D5422B4D670008519FE /* SetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetViewController.swift; sourceTree = "<group>"; };
